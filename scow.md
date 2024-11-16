@@ -335,6 +335,68 @@
         <br>![image](https://github.com/user-attachments/assets/c44e6676-3420-487f-b7dd-ee2798218703)
         </details>
     </details>
+    <details>
+    <summary>protos</summary>
+        <details>
+        <summary>protos/package.json</summary>
+        <br>描述了一个 npm 包的基本信息和配置信息
+        <br>描述和配置 SCOW 项目的 gRPC API 模块
+        <br>作为 @scow 命名空间下的一个子模块，提供 gRPC 接口定义相关功能。
+        <br>使用 version 字段跟踪当前接口的版本号，便于发布和更新。
+        <br>lint 脚本通过 buf lint 保证 protobuf 文件的质量。
+        <br>breaking 脚本使用 buf breaking 验证接口定义的变更是否会破坏与旧版本的兼容性。
+        <br>包含了清晰的描述、作者、许可证信息及代码仓库地址。
+            <details>
+            <summary>scripts</summary>
+                <br>lint:命令为 buf lint。使用 Buf 工具对 protobuf 文件进行 lint（语法检查），确保接口定义符合规范。
+                <br>breaking:命令为 buf breaking --against '../.git#subdir=protos'。用于检查当前 protobuf 文件的接口是否与以前版本不兼容。参数 --against '../.git#subdir=protos'：指定将当前代码与 git 历史中 protos 子目录的代码进行对比。
+            </details> 
+            <details>
+            <summary>基本信息</summary>
+                <br>脚本读取根目录下的 pnpm-lock.yaml 文件，识别应用程序的依赖项。如果找不到锁文件，脚本会抛出错误。
+                <br>name:包名称为 @scow/grpc-api。@scow 是命名空间，表明这是一个属于 SCOW 项目的子包。
+                <br>private:设置为 false，表示此包不是私有包，可以发布到 npm 公共仓库（尽管这里似乎没有实际计划发布）。
+                <br>version:当前版本为 1.12.0，使用语义化版本（Semantic Versioning）。
+                <br>description:描述为 “The gRPC API for SCOW”，表明这个包定义了 SCOW 项目的 gRPC 接口。
+                <br>main:主入口文件为 index.js。暗示此包可能包含或导出 JavaScript 文件（虽然 gRPC 通常与 protobuf 相关）。
+                <br>author:作者为 PKUHPC，链接到其 GitHub 主页。
+                <br>license:使用的是 “Mulan PSL v2”（木兰开源协议 2.0），表明该项目遵循中国的开源协议。
+                <br>repository:项目代码的版本库地址，存放于 GitHub。
+            </details> 
+        </details>
+        <details>
+        <summary>protos/buf.yaml</summary>
+        <br>一个配置文件，可能与 Buf 工具相关，用于管理和验证 gRPC 的 protobuf 文件
+        <br>具体操作流程：
+        <br>版本控制：通过 version: v1 维护配置文件的语义化版本管理。
+        <br>接口兼容性检查：使用 breaking 检测修改是否破坏兼容性，保护已有系统或客户端的正常运行。
+        <br>代码规范检查：lint 确保 protobuf 文件的书写符合行业或项目的约定。排除部分规则以适应具体的项目需求。
+        </details>
+        <details>
+        <summary>protos/CHANGELOG.md</summary>
+        <br>@scow/grpc-api的版本更新的日志，讲了每次更新了哪些问题
+        </details>
+        <details>
+        <summary>protos/audit</summary>
+            <details>
+            <summary>protos/audit/operation_log.proto</summary>
+            <br>全面定义了 SCOW 系统的 gRPC 消息协议，是服务端和客户端进行通信的基础。
+            <br>具体功能：
+            <br>用户登录与登出，作业管理（SubmitJob+EndJob），创建远程桌面会话，删除远程桌面会话。创建、删除文件和目录，文件分片上传与合并。文件移动和复制，添加/移除用户到账户，设置/取消账户管理员权限，用户封禁/解封，创建租户，设置/取消租户管理员，财务权限设置，设置/取消平台管理员权限
+            <br>设置平台计费规则，为账户设置消费限制，处理充值。设置租户的计费规则。UNKNOWN = 0; // 未知SUCCESS = 1; // 成功FAIL = 2;    // 失败
+            <br>管理数据集。管理算法版本。账户的创建、充值、消费记录导出。租户的账户列表、消费记录管理。设置/移除租户管理员。用户租户的变更操作。操作日志导出。自定义类型的事件支持，允许用户通过 name 和 content 自定义事件内容。
+            </details>
+            <details>
+            <summary>protos/audit/statistic.proto</summary>
+            <br>一个围绕系统使用和活动统计的服务。
+            <br>具体功能：
+            <br>GetActiveUserCount用于统计某个时间范围内的活跃用户数。支持按时区调整统计基准。
+            <br>GetPortalUsageCount 和 GetMisUsageCount统计系统中不同操作类型的使用情况。响应中包含多个操作类型及其对应的使用计数。
+            <br>![image](https://github.com/user-attachments/assets/ce3ab6a7-4ea0-4756-a8ac-32447050a8ae)
+            <br>![image](https://github.com/user-attachments/assets/b0be60a6-1ee2-4462-b48f-c513358c8253)
+            </details>
+        </details>
+    </details>
 </details>
 
 

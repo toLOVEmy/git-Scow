@@ -172,22 +172,22 @@
         </details>
         <details>
         <summary>scripts</summary>
-        build: turbo run build — 使用 Turbo 工具来构建整个项目。
-        build:libs: turbo run build --filter "./libs/**" — 只构建 libs 目录下的库。
-        build:images: docker build -f docker/Dockerfile.scow -t scow . — 使用 Docker 构建镜像。
-        build:protos: turbo run build --filter "./libs/protos/**" — 只构建 libs/protos 目录下的 Protobuf 文件。
-        prepareDev: pnpm build:libs && turbo run prepareDev — 先构建库，然后运行 prepareDev。
-        prune: pnpm clean --yes && pnpm bootstrap --ci -- --production — 清理并在 CI 环境中以生产模式重建项目。
-        dev:libs: turbo run dev --concurrency 100% --filter "./libs/**" — 在开发模式下，针对 libs 目录下的所有库运行脚本。
-        devenv: docker compose --env-file dev/.env.dev -f dev/docker-compose.dev.yml up -d — 使用 Docker Compose 启动开发环境。
-        devenv:stop: docker compose --env-file dev/.env.dev -f dev/docker-compose.dev.yml down — 停止开发环境中的 Docker 容器。
-        test: turbo run test — 使用 Turbo 工具运行测试。
-        test:ci: pnpm run -r test --ci --coverage --runInBand — 在 CI 环境中运行测试，并生成测试覆盖率报告。
-        prepare: 用于初始化 Husky（Git 钩子管理工具），确保所有的 Git 钩子正确配置。
-        lint: turbo run lint --continue — 使用 Turbo 工具运行代码检查，并且在发现错误时继续运行。
-        ci:version: node scripts/version.mjs — 生成项目版本信息。
-        ci:publish: pnpm publish -r — 发布项目。
-        api:breaking: 运行 Protobuf 文件的版本断裂检测，确保 API 兼容性。
+        <br>build: turbo run build — 使用 Turbo 工具来构建整个项目。
+        <br>build:libs: turbo run build --filter "./libs/**" — 只构建 libs 目录下的库。
+        <br>build:images: docker build -f docker/Dockerfile.scow -t scow . — 使用 Docker 构建镜像。
+        <br>build:protos: turbo run build --filter "./libs/protos/**" — 只构建 libs/protos 目录下的 Protobuf 文件。
+        <br>prepareDev: pnpm build:libs && turbo run prepareDev — 先构建库，然后运行 prepareDev。
+        <br>prune: pnpm clean --yes && pnpm bootstrap --ci -- --production — 清理并在 CI 环境中以生产模式重建项目。
+        <br>dev:libs: turbo run dev --concurrency 100% --filter "./libs/**" — 在开发模式下，针对 libs 目录下的所有库运行脚本。
+        <br>devenv: docker compose --env-file dev/.env.dev -f dev/docker-compose.dev.yml up -d — 使用 Docker Compose 启动开发环境。
+        <br>devenv:stop: docker compose --env-file dev/.env.dev -f dev/docker-compose.dev.yml down — 停止开发环境中的 Docker 容器。
+        <br>test: turbo run test — 使用 Turbo 工具运行测试。
+        <br>test:ci: pnpm run -r test --ci --coverage --runInBand — 在 CI 环境中运行测试，并生成测试覆盖率报告。
+        <br>prepare: 用于初始化 Husky（Git 钩子管理工具），确保所有的 Git 钩子正确配置。
+        <br>lint: turbo run lint --continue — 使用 Turbo 工具运行代码检查，并且在发现错误时继续运行。
+        <br>ci:version: node scripts/version.mjs — 生成项目版本信息。
+        <br>ci:publish: pnpm publish -r — 发布项目。
+        <br>api:breaking: 运行 Protobuf 文件的版本断裂检测，确保 API 兼容性。
         </details>
         <details>
         <summary>devDependencies</summary>
@@ -211,6 +211,14 @@
         <summary>pnpm</summary>
         patchedDependencies: 为 react-typed-i18n 和 next 两个包提供了补丁文件，用于修复某些问题或调整特性。
         </details>
+    </details>
+    <details>
+    <summary>eslint.config.js</summary>
+    <br>一个 ESLint 配置文件，主要用于 JavaScript/TypeScript 项目的代码质量检查和自动化处理。它配置了多个规则，插件以及自定义的设置。
+    <br>忽略了一些常见的文件夹和文件。
+    <br>定义了较为宽松的 TypeScript 规则，避免了严格的类型检查和异步函数使用要求。
+    <br>强制要求每个文件包含版权头。
+    <br>基于扩展的方式引入了外部配置（@ddadaal/eslint-config），实现了配置的复用和统一管理。
     </details>
 </details>
 

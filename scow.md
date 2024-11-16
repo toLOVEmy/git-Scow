@@ -107,6 +107,7 @@
         强制每个文件独立编译
         </details>
     </details>
+    <details>
     <summary>renovate.json</summary>
     用于配置自动化的依赖更新工具 Renovate。Renovate 通过自动提交 pull requests 来更新依赖库，使得项目保持最新和安全。
         <details>
@@ -130,6 +131,85 @@
         自动分组次要和修补更新。
         禁用特定文件和包的自动更新，以减少不必要的更新。
         针对特定包禁用更新，可能是由于稳定性、兼容性等原因。
+        </details>
+    </details>
+    <details>
+    <summary>pnpm-workspace.yaml</summary>
+    指定了项目中的特定文件和目录路径，以便选择或排除某些内容。它通常用于指定在构建、测试、发布等过程中需要关注的文件和目录，或者是用于管理依赖、模块、文档等。
+        <details>
+        <summary>代码库和应用程序</summary>
+        libs/** 和 apps/**
+        </details>
+        <details>
+        <summary>文档目录</summary>
+        docs
+        </details>
+        <details>
+        <summary>排除 Next.js 构建产物</summary>
+        !**/.next
+        </details>
+        <details>
+        <summary>协议定义文件</summary>
+        protos
+        </details>
+        <details>
+        <summary>部署和开发相关的文件</summary>
+        deploy/** 和 dev/**
+        </details>
+    </details>
+    <details>
+    <summary>package.json</summary>
+    定义了项目 scow 的基本配置，包括依赖管理、构建、测试、开发环境等任务的 NPM 脚本，以及开发过程中所使用的工具和库。
+    使用 Turbo 加速构建和任务运行。
+    pnpm 用作包管理器，优化依赖管理。
+    配置了 Docker 和其他开发工具（如 Husky 和 ESLint）。
+    版本和发布流程也得到了支持。
+        <details>
+        <summary>项目基本信息</summary>
+        name: "scow" — 项目的名称。
+        private: true — 该项目是私有的，不会发布到 npm 注册库。
+        version: "1.6.3" — 项目的版本号。
+        </details>
+        <details>
+        <summary>scripts</summary>
+        build: turbo run build — 使用 Turbo 工具来构建整个项目。
+        build:libs: turbo run build --filter "./libs/**" — 只构建 libs 目录下的库。
+        build:images: docker build -f docker/Dockerfile.scow -t scow . — 使用 Docker 构建镜像。
+        build:protos: turbo run build --filter "./libs/protos/**" — 只构建 libs/protos 目录下的 Protobuf 文件。
+        prepareDev: pnpm build:libs && turbo run prepareDev — 先构建库，然后运行 prepareDev。
+        prune: pnpm clean --yes && pnpm bootstrap --ci -- --production — 清理并在 CI 环境中以生产模式重建项目。
+        dev:libs: turbo run dev --concurrency 100% --filter "./libs/**" — 在开发模式下，针对 libs 目录下的所有库运行脚本。
+        devenv: docker compose --env-file dev/.env.dev -f dev/docker-compose.dev.yml up -d — 使用 Docker Compose 启动开发环境。
+        devenv:stop: docker compose --env-file dev/.env.dev -f dev/docker-compose.dev.yml down — 停止开发环境中的 Docker 容器。
+        test: turbo run test — 使用 Turbo 工具运行测试。
+        test:ci: pnpm run -r test --ci --coverage --runInBand — 在 CI 环境中运行测试，并生成测试覆盖率报告。
+        prepare: 用于初始化 Husky（Git 钩子管理工具），确保所有的 Git 钩子正确配置。
+        lint: turbo run lint --continue — 使用 Turbo 工具运行代码检查，并且在发现错误时继续运行。
+        ci:version: node scripts/version.mjs — 生成项目版本信息。
+        ci:publish: pnpm publish -r — 发布项目。
+        api:breaking: 运行 Protobuf 文件的版本断裂检测，确保 API 兼容性。
+        </details>
+        <details>
+        <summary>devDependencies</summary>
+        @bufbuild/buf: 用于管理和生成 Protobuf 文件。
+        @changesets/cli: 用于版本管理和生成变更日志。
+        eslint 和 @ddadaal/eslint-config: 用于代码静态分析和检查。
+        jest 和 ts-jest: 用于测试框架和 TypeScript 支持。
+        typescript: TypeScript 支持。
+        turbo: Turbo 工具，用于加速 monorepo 构建和任务运行。
+        pnpm: 项目使用的包管理器。
+        </details>
+        <details>
+        <summary>volta</summary>
+        node: "20.15.0" — 指定该项目使用的 Node.js 版本为 20.15.0。
+        </details>
+        <details>
+        <summary>packageManager</summary>
+        pnpm@9.4.0 — 项目使用 pnpm 作为包管理器，并指定了其版本。
+        </details>
+        <details>
+        <summary>pnpm</summary>
+        patchedDependencies: 为 react-typed-i18n 和 next 两个包提供了补丁文件，用于修复某些问题或调整特性。
         </details>
     </details>
 </details>

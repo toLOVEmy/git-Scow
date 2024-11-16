@@ -467,6 +467,19 @@
             <br>枚举定义 SortOrderASCEND (值 0): 表示升序排序。DESCEND (值 1): 表示降序排序。
             </details>
         </details>
+        <details>
+        <summary>protos/google</summary>
+            <details>
+            <summary>protos/google/type</summary>
+                <details>
+                <summary>protos/google/type/date.proto</summary>
+                <br>这是一个描述日期的 proto3 消息定义，定义了一个 Date 类型，用于表示一个完整的或部分的日历日期。它的主要用途是表示像生日、纪念日、信用卡到期日期等日期信息。该消息支持不同的日期粒度，可以只包含年份、月份，或者是完整的日期。
+                <br>year (字段编号 1)：表示年份，取值范围是 1 到 9999，或者为 0 用于表示没有年份的日期（例如只包含月份和日期的情况）。
+                <br>month (字段编号 2)：表示月份，取值范围是 1 到 12，或者为 0 用于表示没有月份和日期的年份（例如只有年份的日期）。
+                <br>day (字段编号 3)：表示日期，取值范围是 1 到 31，且必须是该年份和月份有效的日期，或者为 0 用于表示只包含年份和月份的日期（例如只包含年和月而不关心具体日期的场景）。
+                </details>
+            </details>
+        </details>
     </details>
 </details>
 

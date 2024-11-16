@@ -107,6 +107,31 @@
         强制每个文件独立编译
         </details>
     </details>
+    <summary>renovate.json</summary>
+    用于配置自动化的依赖更新工具 Renovate。Renovate 通过自动提交 pull requests 来更新依赖库，使得项目保持最新和安全。
+        <details>
+        <summary>extends</summary>
+        该配置继承了 Renovate 的基本配置（config:base）
+        </details>
+        <details>
+        <summary>ignorePaths</summary>
+        指定 Renovate 忽略的文件或路径："docker-compose.dev.yml"，"dev/ldap/Dockerfile"，".devcontainer/**"
+        </details>
+        <details>
+        <summary>timezone</summary>
+        设置 Renovate 的时区为上海时间（Asia/Shanghai），这会影响 Renovate 的任务调度时间，确保按照该时区的时间进行操作。
+        </details>
+        <details>
+        <summary>schedule</summary>
+        every sunday 表示每周日执行一次依赖更新任务
+        </details>
+        <details>
+        <summary>packageRules</summary>
+        自动分组次要和修补更新。
+        禁用特定文件和包的自动更新，以减少不必要的更新。
+        针对特定包禁用更新，可能是由于稳定性、兼容性等原因。
+        </details>
+    </details>
 </details>
 
 

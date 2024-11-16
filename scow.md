@@ -396,6 +396,77 @@
             <br>![image](https://github.com/user-attachments/assets/b0be60a6-1ee2-4462-b48f-c513358c8253)
             </details>
         </details>
+        <details>
+        <summary>protos/common</summary>
+            <details>
+            <summary>protos/common/config.proto</summary>
+            <br>获取集群配置GetClusterConfig: 按集群 ID 查询其具体配置，返回调度器名称及分区信息。
+            <br>获取用户可用分区GetAvailablePartitionsForCluster: 根据用户账户和 ID 获取用户可用的分区信息。
+            <br>获取集群配置文件GetClusterConfigFiles: 返回 SCOW 部署中所有集群的配置文件内容。
+            <br>获取 API 版本GetApiVersion: 提供 SCOW API 的版本信息，便于其他服务接入。
+            <br>![image](https://github.com/user-attachments/assets/7abec485-11dd-444d-9405-a00bad92c9ec)
+            <br>![image](https://github.com/user-attachments/assets/b3ea5a57-683b-4c0d-a9fd-c108eb371fc6)
+            <br>![image](https://github.com/user-attachments/assets/93aecdaf-af61-4ba3-9dfd-656b128b6e08)
+            </details>
+            <details>
+            <summary>protos/common/ended_job.proto</summary>
+            <br>这个 proto 文件定义了 JobInfo 消息，表示一个作业的详细信息，主要用于记录作业的提交、执行和资源使用情况。
+            <br>具体功能：
+            <br>基本作业信息
+                <br>bi_job_index：作业的唯一标识符，通常是数据库中的主键或内部生成的 ID。
+                <br>id_job：作业 ID，可能是作业调度系统（如 Slurm）的标识符。
+                <br>account：提交作业的账户。
+                <br>user：提交作业的用户。
+                <br>partition：作业运行的分区名。
+                <br>nodelist：作业分配的节点列表。
+            <br>作业的时间信息
+                <br>time_submit：作业提交时间。
+                <br>time_start：作业开始执行时间。
+                <br>time_end：作业结束时间。
+                <br>record_time：作业信息记录的时间。
+            <br>资源请求与分配
+                <br>gpu：请求的 GPU 数量。
+                <br>cpus_req：请求的 CPU 数量。
+                <br>mem_req：请求的内存（MB）。
+                <br>nodes_req：请求的节点数。
+                <br>cpus_alloc：实际分配的 CPU 数量。
+                <br>mem_alloc：实际分配的内存（MB）。
+                <br>nodes_alloc：实际分配的节点数。
+            <br>作业运行时限和实际使用
+                <br>timelimit：作业的时间限制（秒）。
+                <br>time_used：作业实际使用的时间（秒）。
+                <br>time_wait：作业在队列中等待的时间（秒）。
+            <br>作业的质量服务和费用信息
+                <br>qos：作业的服务质量（Quality of Service）标识。
+                <br>tenant_price：租户层级的费用。
+                <br>account_price：账户层级的费用。
+            </details>
+            <details>
+            <summary>protos/common/i18n.proto</summary>
+            <br>该 proto 文件定义了用于国际化（i18n）处理的消息类型，主要用于支持多语言环境下的文本显示。
+            <br>I18nObject:I18nObject 包含一个嵌套消息 I18n，用于描述多语言的文本信息。该消息支持三种语言：default：默认语言文本。en：英文文本（可选）。zh_cn：简体中文文本（可选）。
+            <br>I18nStringProtoType:I18nStringProtoType 采用 oneof 来表示两种可能的值：direct_string：直接的字符串（适用于没有多语言需求的场景）。i18n_object：包含多语言支持的 I18nObject，适用于需要多语言支持的场景。
+            </details>
+            <details>
+            <summary>protos/common/job.proto</summary>
+            <br>这个 proto 文件定义了一个名为 RunningJob 的消息类型，表示正在运行的作业的详细信息。
+            <br>job_id (string)：作业的唯一标识符。partition (string)：作业所属的分区。name (string)：作业名称。user (string)：提交作业的用户。state (string)：当前作业的状态。running_time (string)：作业的运行时间。nodes (string)：作业使用的计算节点列表。
+            <br>nodes_or_reason (string)：如果作业没有分配到节点，则可能包含作业未分配原因。account (string)：提交作业的账户名。cores (string)：作业请求的核心数。gpus (string)：作业请求的 GPU 数量。qos (string)：作业的质量等级（Quality of Service）。
+            <br>submission_time (string)：作业提交的时间。time_limit (string)：作业的时间限制，格式为 days-hours:minutes:seconds，可以是 "NOT_SET" 或 "UNLIMITED"。working_dir (string)：作业的工作目录。
+            </details>
+            <details>
+            <summary>protos/common/money.proto</summary>
+            <br>这个 Money 消息在 proto3 语法中用于表示货币金额。
+            <br>positive (bool)该字段表示货币值是正数还是负数。它可以用于表示信用（正数）和借记（负数），或处理退款和支付等场景。
+            <br>yuan (uint64)该字段存储货币的整数部分，假设是以人民币（元）为单位。使用 uint64 类型表示，可以处理较大的金额。
+            <br>decimal_place (uint32)该字段表示货币的精确小数部分，最多可保留四位小数。它通常用于表示“分”的值（人民币单位的百分之一）。比如 12.3456 元就会在这里使用 12 和 3456 分别存储整数和小数部分。
+            </details>
+            <details>
+            <summary>protos/common/sort_order.proto</summary>
+            <br>这是一个简单的 proto3 消息定义，定义了一个名为 SortOrder 的枚举类型，用于表示排序顺序。
+            <br>枚举定义 SortOrderASCEND (值 0): 表示升序排序。DESCEND (值 1): 表示降序排序。
+            </details>
+        </details>
     </details>
 </details>
 

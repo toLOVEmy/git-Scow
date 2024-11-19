@@ -1552,6 +1552,269 @@
                     </details>
                 </details>
             </details>
+           <details>
+            <summary> apps/ai/assets</summary>
+                <details>
+                <summary>apps/ai/assets/app</summary>
+                    <details>
+                    <summary>apps/ai/assets/app/server_entry.sh</summary>
+                    <br>这个脚本是一个简单的 Bash 脚本，包含了一个生成密码的函数和设置环境变量的部分。
+                    <br>该脚本的作用是生成随机密码，并根据传入的参数设置相关的环境变量。
+                    <br>![image](https://github.com/user-attachments/assets/8e6a74c4-8ddd-4dd2-9a65-c2f6f65abed2)
+                        <details>
+                        <summary>get_password 函数</summary>
+                        <br>该函数用于生成一个随机的密码。
+                        <br>/dev/urandom：这是一个随机数源，通过它可以获取随机数据。
+                        <br>tr -dc A-Za-z0-9：这条命令会过滤掉非字母和数字的字符，只保留字母（大小写）和数字。
+                        <br>head -c$1：表示输出前 $1 个字符，$1 是函数的第一个参数，指定密码的长度。
+                        <br>echo $password：输出生成的密码。
+                        </details>
+                        <details>
+                        <summary> 设置环境变量</summary>
+                        <br>export：该命令用于设置环境变量，使其对当前的 Shell 及其子进程可用。
+                        <br>$1、$2、$3：分别表示脚本运行时传入的第一个、第二个和第三个参数，这些参数值被用来设置环境变量 PORT、HOST 和 SVCPORT。
+                        </details>
+                    </details>
+                    <details>
+                    <summary>apps/ai/assets/app/vnc_entry.sh</summary>
+                    <br>这意味着，执行该脚本后，环境变量 PORT、HOST 和 SVCPORT 的值会被设为你传入的值，并且这些环境变量会在当前 shell 会话以及子进程中可用。
+                    <br>设置环境变量：export PORT=$1：将脚本的第一个参数 $1 赋值给环境变量 PORT。export HOST=$2：将脚本的第二个参数 $2 赋值给环境变量 HOST。export SVCPORT=$3：将脚本的第三个参数 $3 赋值给环境变量 SVCPORT。
+                    <br>![image](https://github.com/user-attachments/assets/b883ed46-beb7-4072-9352-ea5aafcb8fec)
+                    </details>
+                </details>
+                <details>
+                <summary> apps/ai/assets/icons</summary>
+                <br>S的图像：192.png,512.png,favicon.ico
+                </details>
+               <details>
+                <summary> apps/ai/assets/logo</summary>
+                <br>openscow的图像：banner.dark.svg，banner.svg，logo.dark.svg，logo.svg
+                </details>
+            </details>
+           <details>
+            <summary> apps/ai/config</summary>
+            <br>scow的配置文件，就是一键部署那里的配置，多了一个ai的配置文件
+            </details>
+           <details>
+            <summary> apps/ai/env</summary>
+                <details>
+                <summary> apps/ai/env/.env.dev</summary>
+                <br>DB_HOST=localhost    DB_NAME=scow_server    AUTH_EXTERNAL_URL="http://auth:5000"
+                </details>
+            </details>
+           <details>
+            <summary> apps/ai/src</summary>
+                <details>
+                <summary> apps/ai/src/app</summary>
+                    <details>
+                    <summary> apps/ai/src/app/auth.ts</summary>
+                    <br>这段代码是一个基于 React 和 tRPC 的钩子函数（hooks）实现，用于管理用户的认证信息。
+                    <br>这段代码是与前端应用中的用户认证相关的功能实现，结合了 React 钩子和 tRPC 的查询/突变（mutation）来进行数据获取和操作。
+                    <br>使用方式：
+                    <br>useUserQuery：用于查询用户信息，一般用于页面加载时获取当前用户状态。
+                    <br>useLogoutMutation：用于登出操作，通常会在登出按钮的点击事件中调用。
+                    <br>useOptionalUser：在需要获取当前用户但不强求的场景下使用（例如在一些组件中检查用户是否存在）。
+                    <br>useUser：在需要保证用户已登录的场景中使用，如果没有用户数据会抛出错误，适用于需要强制认证的场景。
+                        <details>
+                        <summary>useUserQuery</summary>
+                        <br>功能：获取用户信息。
+                        <br>实现：调用 trpc.auth.getUserInfo.useQuery 来获取用户信息。staleTime: Infinity 表示该数据在客户端永远不会过期，即不会自动重新请求。
+                        <br>返回：返回一个 useQuery 钩子，包含用户数据。
+                        </details>
+                        <details>
+                        <summary>useLogoutMutation</summary>
+                        <br>功能：执行登出操作。
+                        <br>实现：调用 trpc.auth.logout.useMutation 来进行登出操作，通常会触发清除用户的认证信息。
+                        <br>返回：返回一个 useMutation 钩子，用于执行登出请求。
+                        </details>
+                        <details>
+                        <summary>useOptionalUser</summary>
+                        <br>功能：获取当前用户信息（如果已登录），否则返回 undefined。
+                        <br>实现：通过调用 useUserQuery() 获取用户数据，并从中提取 data?.user。如果没有用户数据，返回 undefined。
+                        <br>返回：当前登录的用户信息或者 undefined。
+                        </details>
+                        <details>
+                        <summary>useUser</summary>
+                        <br>功能：获取当前已登录的用户信息，若未登录则抛出错误。
+                        <br>实现：通过 useOptionalUser 获取用户数据，如果没有数据（即用户未登录），则抛出 Error("not logged in")。
+                        <br>返回：当前登录的用户信息。
+                        </details>
+                    </details>
+                    <details>
+                    <summary> apps/ai/src/app/clientLayout.tsx</summary>
+                    <br>ClientLayout 组件是一个复杂的布局容器，负责设置页面的全局配置，包括国际化、暗模式、UI 配置、样式处理和错误处理。它将多个不同的上下文和状态管理功能整合在一起，为应用提供统一的外观和行为。
+                    <br>这段代码是 React 组件 ClientLayout 的实现，主要用于设置前端应用的全局布局，包括语言选择、暗模式、UI 配置和样式配置等。它将多个子组件和上下文提供程序组合在一起，并通过 tRPC 查询加载 UI 配置。
+                    <br>代码执行流程：
+                    <br>语言设置：在 Provider 中设置语言，默认是 zh_cn（简体中文）。
+                    <br>样式和暗模式：使用 StyleProvider 和 DarkModeProvider 处理样式和暗模式。
+                    <br>UI 配置加载：通过 useConfigQuery 获取 UI 配置，如果正在加载，显示 Loading 组件；否则，使用 UI 配置并渲染页面内容。
+                    <br>UI 配置提供：将 UI 配置和主机名信息提供给上下文中的子组件。
+                    <br>返回值：返回的组件结构是一个包含多个提供程序（Provider）的嵌套结构，所有页面内容都被包裹在这些提供程序中，确保在应用中可以访问全局配置、语言、主题、样式等信息。
+                        <details>
+                        <summary>国际化支持</summary>
+                        <br>通过 Provider 提供初始语言设置，目前默认设置为 "zh_cn"（简体中文）。不同语言的定义存储在 languagesMap 中。
+                        </details>
+                        <details>
+                        <summary>暗模式</summary>
+                        <br>使用 DarkModeProvider 和 DarkModeCookie 来管理暗模式的状态。initialDark 可以作为初始值进行传递。
+                        </details>
+                        <details>
+                        <summary>UI 配置加载</summary>
+                        <br>使用 trpc.config.getUiConfig.useQuery 钩子从后端获取 UI 配置，并根据配置动态设置应用的主要颜色（primaryColor）。该颜色值根据当前 hostname （主机名）来决定，优先级依次为：hostnameMap 中的匹配颜色 > 默认颜色。
+                        </details>
+                        <details>
+                        <summary>样式提供和配置</summary>
+                        <br>StyleProvider 用于设置样式相关的提供者，并启用 legacyLogicalPropertiesTransformer。
+                        <br>使用 StyledComponentsRegistry 和 AntdStyleRegistry 来注册样式，支持 styled-components 和 Ant Design 的样式系统。
+                        </details>
+                        <details>
+                        <summary>页面加载与错误处理</summary>
+                        <br>Loading 组件用于在 UI 配置加载时显示一个加载动画。
+                        <br>ErrorBoundary 和 RootErrorContent 组件用于捕捉和处理渲染过程中可能出现的错误，确保应用在发生错误时不会崩溃。
+                        </details>
+                        <details>
+                        <summary>UI 配置上下文</summary>
+                        <br>使用 UiConfigContext.Provider 提供全局的 UI 配置信息给子组件，子组件可以通过上下文访问 UI 配置（如主机名和颜色配置）。
+                        </details>
+                        <details>
+                        <summary>其他组件和功能</summary>
+                        <br>GlobalStyle：应用全局样式。
+                        <br>TopProgressBar：显示顶部进度条，用于展示页面加载进度。
+                        </details>
+                    </details>
+                    <details>
+                    <summary> apps/ai/src/app/layout.tsx</summary>
+                    <br>这段代码是一个 Next.js 应用的自定义 MyApp 组件，它负责将布局容器和一些必要的环境设置提供给页面。
+                    <br>MyApp 是一个 Next.js 应用的自定义入口组件，它将页面内容包裹在布局容器中，并根据用户的暗模式设置提供合适的配置。
+                    <br>它通过 ServerClientProvider 和 ClientLayout 实现从服务端和客户端的 TRPC 状态管理和数据通信。通过这种方式，可以确保页面在不同环境（如服务端或客户端）以及不同配置下都能正确展示和工作。
+                    <br>主要流程：
+                    <br>获取暗模式设置：首先从 Cookie 中提取名为 scow-dark 的暗模式设置。如果存在，转换为 DarkModeCookie 类型。
+                    <br>提供全局配置和布局：通过嵌套 ServerClientProvider 和 ClientLayout 将页面内容包裹在它们内。ClientLayout 组件负责设置语言、暗模式、样式等全局配置。
+                    <br>设置页面头部信息：在 html 头部中添加一些 Meta 标签和资源，如 manifest.json 和 Favicon。
+                    <br>渲染页面内容：在 ClientLayout 中渲染传入的 children（页面内容）。
+                        <details>
+                        <summary>导入样式</summary>
+                        <br>import "antd/dist/reset.css";：导入 Ant Design 的默认样式，用于应用的基本样式。
+                        <br>import { DarkModeCookie } from "@scow/lib-web/build/layouts/darkMode";：从自定义的库中导入用于管理暗模式的 Cookie。
+                        </details>
+                        <details>
+                        <summary>从 cookies 中获取暗模式设置</summary>
+                        <br>使用 next/headers 库的 cookies() 函数从 HTTP 请求的 Cookie 中获取暗模式设置（scow-dark）。如果找到了，解析它并将其转换为 DarkModeCookie 类型。
+                        </details>
+                        <details>
+                        <summary>MyApp 组件</summary>
+                        <br>它接受一个 children 属性，这个属性是页面的内容（React 组件或页面内容）。
+                        <br>在 ServerClientProvider 和 ClientLayout 组件中嵌套 children。
+                        <br>ClientLayout 组件会根据 initialDark 的值提供暗模式配置。
+                        </details>
+                        <details>
+                        <summary>ServerClientProvider</summary>
+                        <br>在 MyApp 组件的根容器中，嵌套了 ServerClientProvider。这个组件是为了在服务端与客户端之间共享 TRPC 客户端和服务器端状态。
+                        <br>它使得从后端到前端的请求和数据通信更为高效和安全。
+                        </details>
+                        <details>
+                        <summary>ClientLayout 组件</summary>
+                        <br>ClientLayout 是一个带有布局和全局配置的组件，提供语言、样式和暗模式等全局环境。
+                        <br>在 ClientLayout 中传入 initialDark 值，将根据当前用户的暗模式设置（从 Cookie 获取）来决定初始暗模式。
+                        </details>
+                        <details>
+                        <summary>BASE_PATH</summary>
+                        <br>使用 src/utils/processEnv 中的 BASE_PATH 定义应用的基础路径。它用于构建 Web 应用中的静态资源路径，如 Web Manifest 文件或 Favicon 文件。
+                        <br>在 <link> 标签中将基础路径连接到 manifest.json 和 /api/icon。
+                        </details>
+                    </details>
+                    <details>
+                    <summary> apps/ai/src/app/page.tsx</summary>
+                    <br>这段代码是使用 Next.js 实现的一个简单的页面重定向功能。
+                    <br>该组件导入了 next/navigation 中的 redirect 函数，用于执行客户端的重定向操作。
+                    <br>Page 组件在渲染时会立即调用 redirect("/dashboard")，这会导致客户端在访问该页面时自动重定向到 /dashboard 路由。
+                    <br>示例使用场景：
+                    <br>登录后重定向：在用户成功登录后，使用这个页面自动重定向到他们的仪表盘或其他特定页面。
+                    <br>授权检查：如果你希望未认证的用户跳转到登录页面，或者已认证的用户跳转到主页面，可以使用这种方式。
+                        <details>
+                        <summary>重定向到 /dashboard</summary>
+                        <br>当页面被渲染时，redirect 函数会被调用，触发一个客户端的重定向，自动跳转到 /dashboard 页面。
+                        <br>这种做法通常用于在某些情况下自动将用户引导到另一个页面，无需用户点击链接，例如在用户登录后或者进行身份验证时。
+                        </details>
+                        <details>
+                        <summary>Page 组件</summary>
+                        <br>该 Page 组件本身不直接渲染任何内容，它的唯一作用是执行重定向。
+                        </details>
+                    </details>
+                    <details>
+                    <summary>apps/ai/src/app/trpcClient.server.tsx</summary>
+                    <br>这段代码是一个 Next.js 的组件，用于提供客户端和服务器之间的通信功能，并使用了 trpc 来进行数据请求。
+                    <br>代码的核心功能是通过 ServerClientProvider 组件将客户端和服务器的数据交互配置封装，并且根据不同的环境设置动态的 API 请求基础 URL。
+                    <br>用途：
+                    <br>动态 URL 配置：根据不同的部署环境（如 Vercel、Render 或本地开发环境），自动配置 API 的基础 URL，确保应用能够在各种环境下正常运行。
+                    <br>TRPC 配置：通过 ClientProvider 提供 TRPC 客户端上下文，使得整个应用可以统一通过 TRPC 进行数据请求。
+                    <br>使用场景：
+                    <br>在 Next.js 项目中，通常会使用这种方式来封装服务器端与客户端的交互，特别是在涉及到 API 请求时，通过环境判断来配置正确的 URL，可以确保应用在开发、生产等不同环境下都能正常工作。
+                        <details>
+                        <summary>getBaseUrl 函数</summary>
+                        <br>该函数用于根据不同的运行环境动态返回 API 的基础 URL。
+                        <br>浏览器环境：如果是在浏览器环境下（typeof window !== "undefined"），则返回空字符串，表示 API 请求使用相对路径。
+                        <br>Vercel 环境：如果在 Vercel 部署环境中，返回 https://VERCEL_URL>，这是 Vercel 提供的域名。
+                        <br>Render 环境：如果在 Render 部署环境中，返回 http://RENDER_INTERNAL_HOSTNAME>:PORT>。
+                        <br>本地环境：如果没有匹配以上环境的条件，假设是本地开发环境，返回 http://localhost:3000 或者根据 process.env.PORT 获取端口。
+                        </details>
+                        <details>
+                        <summary>ServerClientProvider 组件</summary>
+                        <br>这是一个高阶组件（HOC），用于为应用提供一个统一的客户端和服务器通信上下文。
+                        <br>noStore()：这是 next/cache 中的一个 API，表示此组件的缓存策略不存储任何内容，确保每次都从服务器获取数据。
+                        <br>ClientProvider：这是一个自定义的提供者组件，用于提供一个客户端实例，配置了 baseUrl 和 basePath，使得在应用的其他部分可以通过 TRPC 客户端与服务器进行交互。
+                        </details>
+                        <details>
+                        <summary>传递 baseUrl 和 basePath</summary>
+                        <br>baseUrl：通过 getBaseUrl() 获取。
+                        <br>basePath：通过从环境变量 BASE_PATH 获取，通常用于配置应用的前缀路径。
+                        </details>
+                    </details>
+                    <details>
+                    <summary>apps/ai/src/app/trpcClient.tsx</summary>
+                    <br>这段代码实现了一个基于 React 和 trpc 的客户端提供者组件 ClientProvider，用于在应用中设置全局的 TRPC 客户端和 React Query 的配置，方便管理和优化客户端与服务器之间的通信。
+                    <br>用途
+                    <br>API 请求统一管理：将 React Query 和 TRPC 的客户端封装为全局组件，方便在应用中复用。
+                    <br>错误处理与重试策略：集中化的错误处理和重试逻辑，减少分散在代码各处的重复逻辑。
+                    <br>开发体验优化：在开发环境中启用日志记录，方便调试
+                        <details>
+                        <summary>全局 React Query 客户端</summary>
+                        <br>创建和配置 QueryClient，用于管理客户端的查询和变更。
+                        <br>配置全局错误处理（如未授权、请求失败）及请求的默认行为（如重试次数、失焦重试）。
+                        </details>
+                        <details>
+                        <summary>TRPC 客户端</summary>
+                        <br>设置 TRPC 客户端以支持数据请求。
+                        <br>使用 superjson 作为序列化器来支持复杂数据结构的传输。
+                        </details>
+                        <details>
+                        <summary>错误处理</summary>
+                        <br>当发生特定错误（如 UNAUTHORIZED、SFTP_ERROR 等）时，提供友好的用户提示或执行特定操作（如跳转到登录页面）。
+                        </details>
+                    </details>
+                    <details>
+                    <summary>apps/ai/src/app/uiContext.ts</summary>
+                    <br>这段代码定义了一个 React 上下文 UiConfigContext 和一个用于访问上下文的自定义 Hook useUiConfig。
+                    <br>它的主要功能是提供和管理用户界面配置（UiConfig）的数据共享。
+                    <br>这段代码主要实现了 用户界面配置（UI 配置）上下文管理，通过上下文（React Context）和自定义 Hook 的结合，为整个应用提供共享的用户界面配置信息。
+                    <br>使用场景
+                    <br>跨组件共享 UI 配置：适用于需要动态调整界面主题、颜色、布局等配置的应用，例如根据用户选择切换暗/亮模式。
+                    <br>全局主机信息：提供主机名（hostname）信息，方便与后端通信或界面展示。
+                        <details>
+                        <summary>上下文定义</summary>
+                        <br>UiConfigContext 是一个全局的 React 上下文，存储了两类数据：hostname：当前主机名。uiConfig：用户界面相关的配置（UiConfig 类型，例如主题颜色、布局设置等）。
+                        </details>
+                        <details>
+                        <summary>数据访问 Hook</summary>
+                        <br>自定义 Hook useUiConfig：使用 React.useContext 提供对 UiConfigContext 数据的访问。简化了组件对上下文数据的获取过程，增强代码可读性和可维护性。
+                        </details>
+                        <details>
+                        <summary>共享 UI 配置</summary>
+                        <br>通过上下文和自定义 Hook，将 UI 配置在应用的不同组件之间共享，避免通过逐层传递 props 来共享数据。
+                        </details>
+                    </details>
+                </details>
+            </details>
         </details>
     </details>
 </details>

@@ -1816,6 +1816,10 @@
                 </details>
             </details>
         </details>
+        <details>
+        <summary>apps/auth</summary>
+        <br>本服务提供多个HTTP API，其中/auth和/callback必须被公网可访问，其他的API都应该只对内网开放！
+        </details>
     </details>
 </details>
 

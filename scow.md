@@ -984,21 +984,6 @@
                 <br>集群状态管理：提供集群的激活和停用管理，以及查看集群的运行时信息。
                 <br>分区查询：支持根据账户、用户及集群查询可用的分区信息。
                        <details>
-                       <summary> 集群分区查询</summary>
-                               <details>
-                                <summary> GetAvailablePartitions（查询可用分区）</summary>
-                                <br>已废弃，原功能为查询账户下可用的集群分区。
-                                <br>输入：账户名、用户ID。
-                                <br>输出：包含集群和分区信息的响应。
-                                </details>
-                               <details>
-                                <summary> GetAvailablePartitionsForCluster（查询特定集群的分区）</summary>
-                                <br>已废弃，原功能为查询某个集群下的分区。
-                                <br>输入：集群名、账户名、用户ID。
-                                <br>输出：指定集群下的分区列表。
-                                </details>
-                        </details>
-                       <details>
                         <summary> 功能模块</summary>
                                <details>
                                 <summary> 集群分区查询</summary>
@@ -1041,64 +1026,282 @@
                 </details>
                 <details>
                 <summary> protos/server/export.proto</summary>
-                <br>
-                <br>
-                <br>
-                <br>
-                       <details>
-                       <summary> 集群分区查询</summary>
-                               <details>
-                                <summary> GetAvailablePartitions（查询可用分区）</summary>
-                                <br>已废弃，原功能为查询账户下可用的集群分区。
-                                <br>输入：账户名、用户ID。
-                                <br>输出：包含集群和分区信息的响应。
-                                </details>
-                               <details>
-                                <summary> GetAvailablePartitionsForCluster（查询特定集群的分区）</summary>
-                                <br>已废弃，原功能为查询某个集群下的分区。
-                                <br>输入：集群名、账户名、用户ID。
-                                <br>输出：指定集群下的分区列表。
-                                </details>
-                        </details>
+                <br>定义了与账户、用户、消费记录、充值记录相关的导出功能。
+                <br>灵活的过滤条件：提供了丰富的过滤选项，支持按账户状态、时间范围、角色等多维度查询和导出数据。
+                <br>数据流式导出：所有导出请求均采用流式响应，适合大数据量的导出操作。
+                <br>支持多种目标：支持根据不同的目标（如账户、租户等）导出相关的记录，适应多样的业务需求。
                        <details>
                         <summary> 功能模块</summary>
                                <details>
-                                <summary> 集群分区查询</summary>
-                                <br>GetAvailablePartitions（查询可用分区）：已废弃，原功能为查询账户下可用的集群分区。输入：账户名、用户ID。输出：包含集群和分区信息的响应。
+                                <summary> 账户导出</summary>
+                                <br>ExportAccountRequest（导出账户请求）：用于请求导出符合特定条件的账户信息。参数包括：账户数量、租户名称、账户名称、账户状态（封锁、欠费、冻结、正常）。
+                                <br>ExportAccountResponse（账户导出响应）：返回符合条件的账户列表。
                                 </details>
                                <details>
-                                <summary> 集群运行状态管理</summary>
-                                <br>GetClustersRuntimeInfo（获取集群运行时信息）输入：无。输出：集群的当前运行状态（激活或停用），及最后的激活操作记录。
-                                <br>ActivateCluster（激活集群）输入：集群ID、操作员ID。输出：集群是否成功激活。
-                                <br>DeactivateCluster（停用集群）输入：集群ID、操作员ID、停用备注（可选）。输出：集群是否成功停用。
+                                <summary> 用户导出</summary>
+                                <br>ExportUserRequest（导出用户请求）：用于请求导出符合条件的用户信息。参数包括：用户数量、租户名称、排序字段、排序顺序、用户ID或名称、平台角色、租户角色。
+                                <br>ExportUserResponse（用户导出响应）：返回符合条件的用户列表。
+                                <br>ExportedUser（导出用户）：包含用户的详细信息，如用户ID、姓名、邮箱、可用账户、租户名称、创建时间、角色等。
+                                </details>
+                                <details>
+                                <summary> 消费记录导出</summary>
+                                <br>ExportChargeRecordRequest（导出消费记录请求）：用于请求导出消费记录，支持按时间范围、类型和目标（账户、租户等）筛选。参数包括：消费记录数量、开始时间、结束时间、消费类型、目标（单账户、多账户、租户等）。
+                                <br>ExportChargeRecordResponse（消费记录导出响应）：返回符合条件的消费记录。
+                                </details>
+                                <details>
+                                <summary> 充值记录导出</summary>
+                                <br>ExportPayRecordRequest（导出充值记录请求）：用于请求导出充值记录，支持按时间范围、类型和目标（账户、租户等）筛选。参数包括：充值记录数量、开始时间、结束时间、充值类型、目标（单账户、多账户、租户等）。
+                                <br>ExportPayRecordResponse（充值记录导出响应）：返回符合条件的充值记录。
                                 </details>
                         </details>
                         <details>
                        <summary> 数据结构</summary>
                                <details>
-                                <summary> Partition（分区信息）</summary>
-                                <br>包含内存、核心数、GPU 数量、节点数、QoS（服务质量）、描述等属性。
+                                <summary> Account（账户）</summary>
+                                <br>账户信息结构（在导出响应中使用）。
                                 </details>
                                <details>
-                                <summary> ClusterPartitions（集群分区）</summary>
-                                <br>包含集群名称和对应的多个分区。
+                                <summary> TenantRole（租户角色）、PlatformRole（平台角色）</summary>
+                                <br>用户角色信息。
                                 </details>
                                <details>
-                                <summary> ClusterRuntimeInfo（集群运行时信息）</summary>
-                                <br>包括集群ID、激活状态（激活或停用）、最后一次操作记录和更新时间。
+                                <summary> ChargeRecord（消费记录）、PaymentRecord（充值记录）</summary>
+                                <br>分别表示消费和充值的详细记录。
                                 </details>
                                 <details>
-                                <summary> LastActivationOperation（最后激活操作）</summary>
-                                <br>包含操作员ID和停用备注（如果有）。
+                                <summary> AccountOfTenantTarget、AccountsOfTenantTarget、TenantTarget 等</summary>
+                                <br>导出记录时的目标类型，用于指定查询范围（单个账户、多个账户、租户等）。
                                 </details>
                         </details>
                        <details>
                        <summary> 服务定义</summary>
                                <details>
-                                <summary>ConfigService</summary>
-                                <br>提供集群相关的操作，包括获取分区信息、查询集群状态、激活和停用集群。
-                                <br>废弃的接口：GetAvailablePartitions 和 GetAvailablePartitionsForCluster 被标记为废弃，推荐使用新的集群配置接口。
+                                <summary>ExportService</summary>
+                                <br>提供账户、用户、消费记录、充值记录的导出功能。
+                                <br>各导出功能通过 stream 进行响应，支持数据流式传输。
                                 </details>
+                        </details>
+                </details>
+                <details>
+                <summary>protos/server/init.proto</summary>
+                <br>定义了与系统初始化相关的服务，包括初始化管理员设置、查询和用户验证等功能。
+                <br>系统初始化管理：通过设置初始管理员和完成初始化操作，确保系统能够顺利启动并配置管理员权限。
+                <br>用户管理：提供了用户是否存在的查询功能，便于后续进行权限和角色分配。
+                <br>管理员角色配置：支持将用户设置为平台管理员以及租户管理员，确保系统的管理权限配置得当。
+                       <details>
+                        <summary> 功能模块</summary>
+                               <details>
+                                <summary> 查询系统初始化状态</summary>
+                                <br>QuerySystemInitializedRequest（查询系统初始化请求）：用于查询系统是否已初始化。
+                                <br>QuerySystemInitializedResponse（查询系统初始化响应）：返回一个布尔值，表示系统是否已经完成初始化。
+                                </details>
+                               <details>
+                                <summary>创建初始管理员</summary>
+                                <br>CreateInitAdminRequest（创建初始管理员请求）：用于创建系统初始管理员。请求参数包括用户ID、用户名、邮箱和密码。
+                                <br>CreateInitAdminResponse（创建初始管理员响应）：返回一个布尔值，表示是否成功在认证系统中创建初始管理员。
+                                </details>
+                                <details>
+                                <summary>完成系统初始化</summary>
+                                <br>CompleteInitRequest（完成初始化请求）：用于请求完成系统的初始化操作。
+                                <br>CompleteInitResponse（完成初始化响应）：完成初始化后的响应。
+                                </details>
+                                <details>
+                                <summary> 设置初始管理员</summary>
+                                <br>SetAsInitAdminRequest（设置为初始管理员请求）：用于将指定用户设置为平台管理员（PLATFORM_ADMIN）并且是默认租户的租户管理员（TENANT_ADMIN）。
+                                <br>SetAsInitAdminResponse（设置为初始管理员响应）：对应的响应消息。
+                                </details>
+                                <details>
+                                <summary> 取消初始管理员设置</summary>
+                                <br>UnsetInitAdminRequest（取消初始管理员请求）：用于取消指定用户的初始管理员权限。
+                                <br>UnsetInitAdminResponse（取消初始管理员响应）：对应的响应消息。
+                                </details>
+                                <details>
+                                <summary> 用户存在性查询</summary>
+                                <br>UserExistsRequest（查询用户是否存在请求）：用于检查指定用户ID是否存在于系统中。
+                                <br>UserExistsResponse（查询用户是否存在响应）：返回一个布尔值，表示用户是否在系统中存在，同时可选地检查用户是否在认证系统中存在。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务定义</summary>
+                               <details>
+                                <summary>InitService</summary>
+                                <br>提供了以下服务：查询系统是否已初始化。创建初始管理员。完成系统初始化。设置或取消初始管理员角色。查询用户是否存在。
+                                </details>
+                        </details>
+                </details>
+                <details>
+                <summary>protos/server/job.proto</summary>
+                <br>定义了与作业（Job）管理和计费相关的服务，主要功能包括查询作业、管理作业价格、作业时间限制、取消作业以及获取作业提交和计费信息等。
+                <br>作业管理：支持根据多种过滤条件查询、管理作业，如修改价格、查询时间限制等。
+                <br>计费管理：提供详细的计费项目管理功能，包括新增、查询和返回历史项目。
+                <br>统计与分析：支持根据时间统计作业提交情况，帮助管理员了解系统的作业分布和负载。
+                       <details>
+                        <summary> 功能模块</summary>
+                               <details>
+                                <summary> 作业查询与管理</summary>
+                                <br>JobFilter（作业过滤器）：用于根据租户、用户、账户、作业ID、作业结束时间等过滤条件查询作业。
+                                <br>GetJobsRequest（获取作业请求）：根据指定的过滤条件获取作业列表，可分页查询，并可根据多种字段（如ID、名称、时间等）排序。
+                                <br>GetJobsResponse（获取作业响应）：返回符合条件的作业列表，包含作业总数和总计费用等信息。
+                                <br>ChangeJobPriceRequest（修改作业价格请求）：用于根据过滤条件修改作业的账户价格和租户价格。
+                                <br>ChangeJobPriceResponse（修改作业价格响应）：返回修改的作业数量。
+                                <br>GetJobByBiJobIndexRequest（通过BI作业索引获取作业请求）：根据BI作业索引获取作业信息。
+                                <br>GetJobByBiJobIndexResponse（通过BI作业索引获取作业响应）：返回作业信息。
+                                <br>GetRunningJobsRequest（获取正在运行的作业请求）：根据集群、用户、账户等条件获取正在运行的作业。
+                                <br>GetRunningJobsResponse（获取正在运行的作业响应）：返回当前正在运行的作业列表。
+                                <br>ChangeJobTimeLimitRequest（修改作业时间限制请求）：用于修改指定作业的时间限制。
+                                <br>ChangeJobTimeLimitResponse（修改作业时间限制响应）：返回修改是否成功。
+                                <br>QueryJobTimeLimitRequest（查询作业时间限制请求）：查询指定作业的时间限制。
+                                <br>QueryJobTimeLimitResponse（查询作业时间限制响应）：返回作业的时间限制。
+                                <br>CancelJobRequest（取消作业请求）：用于取消指定的作业。
+                                <br>CancelJobResponse（取消作业响应）：返回取消作业操作的结果。
+                                </details>
+                               <details>
+                                <summary>计费与账单管理</summary>
+                                <br>GetBillingItemsRequest（获取计费项目请求）：获取指定租户的计费项目，支持仅获取活跃项目或包括历史项目。
+                                <br>JobBillingItem（作业计费项目）：包含计费项目的ID、路径、价格、创建时间等信息。
+                                <br>GetBillingItemsResponse（获取计费项目响应）：返回活跃和历史的计费项目列表。
+                                <br>AddBillingItemRequest（新增计费项目请求）：用于添加新的计费项目，可以指定租户或作为平台默认项目。
+                                <br>AddBillingItemResponse（新增计费项目响应）：返回新增计费项目的结果。
+                                <br>GetMissingDefaultPriceItemsRequest（获取缺失的默认价格项目请求）：查询缺少的默认价格项目。
+                                <br>GetMissingDefaultPriceItemsResponse（获取缺失的默认价格项目响应）：返回缺失的默认价格项目列表。
+                                </details>
+                                <details>
+                                <summary>作业统计与分析</summary>
+                                <br>GetTopSubmitJobUsersRequest（获取提交作业最多的用户请求）：获取一定时间范围内提交作业最多的用户，默认获取前10名。
+                                <br>GetTopSubmitJobUsersResponse（获取提交作业最多的用户响应）：返回提交作业最多的用户列表。
+                                <br>GetUsersWithMostJobSubmissionsRequest（获取作业提交最多的用户请求）：查询在指定时间段内提交作业最多的用户，最多支持查询10个用户。
+                                <br>GetUsersWithMostJobSubmissionsResponse（获取作业提交最多的用户响应）：返回作业提交最多的用户信息。
+                                <br>GetNewJobCountRequest（获取新作业数量请求）：获取指定时间段内的新作业数量，支持时区设置。
+                                <br>GetNewJobCountResponse（获取新作业数量响应）：返回按日期分组的新作业数量统计。
+                                <br>GetJobTotalCountRequest（获取作业总数请求）：获取系统中所有作业的总数。
+                                <br>GetJobTotalCountResponse（获取作业总数响应）：返回作业的总数。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务定义</summary>
+                               <details>
+                                <summary>JobService</summary>
+                                <br>提供了以下服务：获取作业、修改作业价格、获取运行中的作业。修改作业时间限制、取消作业。获取和添加计费项目。查询提交作业最多的用户、作业统计数据等。
+                                </details>
+                        </details>
+                </details>
+                <details>
+                <summary>protos/server/job_charge_limit.proto</summary>
+                <br>定义了与作业计费限额相关的服务，主要功能包括设置和取消作业的计费限额。
+                <br>计费限额管理：提供了对用户作业计费限额的设置和取消功能，帮助控制作业的费用限制。
+                <br>操作灵活性：支持设置限额和取消限额时，提供对限额状态（如解除封锁）的控制。
+                       <details>
+                        <summary> 功能模块</summary>
+                               <details>
+                                <summary> 作业计费限额管理</summary>
+                                <br>SetJobChargeLimitRequest（设置作业计费限额请求）：用于设置指定租户、账户和用户的作业计费限额。包括租户名称、账户名称、用户ID和限额金额。
+                                <br>SetJobChargeLimitResponse（设置作业计费限额响应）：返回设置操作的结果，成功时无返回数据。
+                                <br>CancelJobChargeLimitRequest（取消作业计费限额请求）：用于取消指定用户的作业计费限额，允许选择是否解除封锁。包括租户名称、账户名称、用户ID和可选的unblock标志。
+                                <br>CancelJobChargeLimitResponse（取消作业计费限额响应）：返回取消操作的结果，成功时无返回数据。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务定义</summary>
+                               <details>
+                                <summary>JobChargeLimitService</summary>
+                                <br>提供了两个主要的RPC方法：SetJobChargeLimit: 设置用户的作业计费限额。CancelJobChargeLimit: 取消用户的作业计费限额。
+                                </details>
+                        </details>
+                </details>
+                <details>
+                <summary>protos/server/tenant.proto</summary>
+                <br>定义了与租户管理相关的服务，涵盖了获取租户信息、创建租户以及设置默认账户封锁阈值等功能。
+                <br>租户管理功能：包括租户的创建、查询和账户管理等功能。
+                <br>管理员和财务人员管理：可以查询租户的管理员和财务人员信息。
+                <br>灵活的账户封锁设置：允许为租户设置默认的账户封锁阈值。
+                       <details>
+                        <summary> 功能模块</summary>
+                               <details>
+                                <summary> 租户信息查询</summary>
+                                <br>GetTenantInfoRequest（获取租户信息请求）：用于查询指定租户的基本信息。包括租户名称。
+                                <br>GetTenantInfoResponse（获取租户信息响应）：返回租户的相关信息，包括：账户余额（balance）账户数量（account_count）用户数量（user_count）默认账户封锁阈值（default_account_block_threshold）管理员信息（admins）：包含管理员的用户ID和用户名。
+                                                                           财务人员信息（financial_staff）：包含财务人员的用户ID和用户名。
+                                </details>
+                               <details>
+                                <summary>租户列表查询</summary>
+                                <br>GetTenantsRequest（获取租户列表请求）：查询所有租户。
+                                <br>GetTenantsResponse（获取租户列表响应）：返回租户名称的列表。
+                                </details>
+                                <details>
+                                <summary>租户创建</summary>
+                                <br>GetAllTenantsRequest（获取所有租户请求）：查询所有租户的详细信息。
+                                <br>GetAllTenantsResponse（获取所有租户响应）：返回租户的总数和每个租户的详细信息，包括：租户ID（tenant_id）租户名称（tenant_name）用户数量（user_count）账户数量（account_count）账户余额（balance）创建时间（create_time）
+                                </details>
+                               <details>
+                                <summary>所有租户信息查询</summary>
+                                <br>CreateTenantRequest（创建租户请求）：用于创建新的租户。包括租户名称、管理员的用户信息（ID、名称、邮箱、密码）。
+                                <br>CreateTenantResponse（创建租户响应）：返回新创建租户的信息，包括租户ID和管理员用户ID，以及是否已在认证系统中创建。
+                                <br>CreateTenantWithExistingUserAsAdminRequest（使用现有用户作为管理员创建租户请求）：用于将现有用户作为管理员创建租户。包括租户名称和管理员的用户信息（ID、名称）。
+                                <br>CreateTenantWithExistingUserAsAdminResponse（使用现有用户作为管理员创建租户响应）：返回创建租户的结果，包括租户名称和管理员用户ID。
+                                </details>
+                               <details>
+                                <summary>设置账户封锁阈值</summary>
+                                <br>SetDefaultAccountBlockThresholdRequest（设置默认账户封锁阈值请求）：用于设置租户的账户封锁阈值金额。
+                                <br>SetDefaultAccountBlockThresholdResponse（设置默认账户封锁阈值响应）：返回设置操作的结果，成功时无返回数据。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务定义</summary>
+                               <details>
+                                <summary>TenantService</summary>
+                                <br>提供了以下RPC方法：GetTenantInfo: 获取指定租户的基本信息。GetTenants: 获取所有租户名称。GetAllTenants: 获取所有租户的详细信息。CreateTenant: 创建新的租户。SetDefaultAccountBlockThreshold: 设置租户的默认账户封锁阈值。
+                                                CreateTenantWithExistingUserAsAdmin: 使用现有用户创建租户并设置为管理员。
+                                </details>
+                        </details>
+                </details>
+                <details>
+                <summary>protos/server/user.proto</summary>
+                <br>定义了一系列与用户和租户管理相关的消息和服务，采用的是 Protocol Buffers (protobuf) 格式。它是用于描述服务端与客户端之间的通信协议，特别是用户、租户的操作和管理。
+                <br>作业管理：支持根据多种过滤条件查询、管理作业，如修改价格、查询时间限制等。
+                <br>计费管理：提供详细的计费项目管理功能，包括新增、查询和返回历史项目。
+                <br>统计与分析：支持根据时间统计作业提交情况，帮助管理员了解系统的作业分布和负载。
+                       <details>
+                        <summary> 主要消息类型</summary>
+                               <details>
+                                <summary> 用户状态和信息</summary>
+                                <br>UserStatus：定义了用户状态（如未封锁和已封锁）。
+                                <br>AccountStatus：包含用户账户状态、余额、配额等信息。
+                                <br>GetUserStatusRequest 和 GetUserStatusResponse：查询用户的状态信息，包括账户状态、存储配额等。
+                                <br>CreateUserRequest 和 CreateUserResponse：用于创建新用户，返回用户 ID。
+                                <br>GetUserInfoRequest 和 GetUserInfoResponse：获取指定用户的详细信息，包括账户隶属和角色等。
+                                </details>
+                               <details>
+                                <summary>账户操作</summary>
+                                <br>AddUserToAccountRequest 和 AddUserToAccountResponse：将用户添加到账户。
+                                <br>RemoveUserFromAccountRequest 和 RemoveUserFromAccountResponse：将用户从账户中移除。
+                                <br>BlockUserInAccountRequest 和 BlockUserInAccountResponse：封锁账户中的用户。
+                                <br>UnblockUserInAccountRequest 和 UnblockUserInAccountResponse：解封账户中的用户。
+                                </details>
+                                <details>
+                                <summary>角色管理</summary>
+                                <br>SetAsAdminRequest 和 SetAsAdminResponse：设置用户为管理员。
+                                <br>UnsetAdminRequest 和 UnsetAdminResponse：取消用户的管理员角色。
+                                <br>SetPlatformRoleRequest 和 SetPlatformRoleResponse：设置用户的平台角色（如平台管理员、财务角色等）。
+                                <br>UnsetPlatformRoleRequest 和 UnsetPlatformRoleResponse：取消平台角色。
+                                </details>
+                               <details>
+                                <summary>用户和租户管理</summary>
+                                <br>ChangeTenantRequest 和 ChangeTenantResponse：更改用户的租户隶属。
+                                <br>GetUsersRequest 和 GetUsersResponse：查询特定租户下的所有用户。
+                                <br>GetAllUsersRequest 和 GetAllUsersResponse：分页查询所有平台用户。
+                                <br>GetNewUserCountRequest 和 GetNewUserCountResponse：获取指定时间段内新增用户的统计信息。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务定义</summary>
+                               <details>
+                                <summary>UserService 和 TenantService 服务</summary>
+                                <br>提供了多种功能接口，如查询用户、账户管理、角色管理、创建和删除用户等。
+                                </details>
+                        </details>
+                        <details>
+                       <summary> 错误处理</summary>
+                            <br>每个请求和响应消息中，错误代码（如 NOT_FOUND, ALREADY_EXISTS 等）用于处理不同的错误情况，确保客户端可以根据不同的错误做出适当的响应。
                         </details>
                 </details>
         </details>

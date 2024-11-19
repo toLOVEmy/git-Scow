@@ -1,5 +1,5 @@
 <details>
-<summary>OpenSCOW</summary>
+<summary>OpenSCOW</summary>    
     <details>
     <summary>turbo.json</summary>
     用于定义任务调度和依赖关系。Turbo 是一个现代化的构建工具，支持任务缓存、并行执行和智能依赖追踪。
@@ -498,67 +498,327 @@
             <br>OnEventRequest：请求消息类型，包含事件的元数据（Metadata），以及实际的事件类型（例如账户冻结、账户支付等）。
             <br>OnEventResponse：响应消息类型，暂时为空（可以用于扩展）。
             </details>
+        </details>
+        <details>
+        <summary>protos/portal</summary>
             <details>
-            <summary>protos/common/ended_job.proto</summary>
-            <br>这个 proto 文件定义了 JobInfo 消息，表示一个作业的详细信息，主要用于记录作业的提交、执行和资源使用情况。
-            <br>具体功能：
-            <br>基本作业信息
-                <br>bi_job_index：作业的唯一标识符，通常是数据库中的主键或内部生成的 ID。
-                <br>id_job：作业 ID，可能是作业调度系统（如 Slurm）的标识符。
-                <br>account：提交作业的账户。
-                <br>user：提交作业的用户。
-                <br>partition：作业运行的分区名。
-                <br>nodelist：作业分配的节点列表。
-            <br>作业的时间信息
-                <br>time_submit：作业提交时间。
-                <br>time_start：作业开始执行时间。
-                <br>time_end：作业结束时间。
-                <br>record_time：作业信息记录的时间。
-            <br>资源请求与分配
-                <br>gpu：请求的 GPU 数量。
-                <br>cpus_req：请求的 CPU 数量。
-                <br>mem_req：请求的内存（MB）。
-                <br>nodes_req：请求的节点数。
-                <br>cpus_alloc：实际分配的 CPU 数量。
-                <br>mem_alloc：实际分配的内存（MB）。
-                <br>nodes_alloc：实际分配的节点数。
-            <br>作业运行时限和实际使用
-                <br>timelimit：作业的时间限制（秒）。
-                <br>time_used：作业实际使用的时间（秒）。
-                <br>time_wait：作业在队列中等待的时间（秒）。
-            <br>作业的质量服务和费用信息
-                <br>qos：作业的服务质量（Quality of Service）标识。
-                <br>tenant_price：租户层级的费用。
-                <br>account_price：账户层级的费用。
+            <summary>protos/portal/app.proto</summary>
+            <br>一个基于 gRPC 的协议文件，用于定义和描述与应用程序会话管理相关的服务接口及其数据结构，主要用于一个分布式计算环境的应用门户中
+            <br>多语言支持：通过国际化字符串实现不同语言环境的适配。
+            <br>资源管理：支持灵活的资源分配配置（如 CPU、GPU、内存等），适用于高性能计算和多用户环境。
+            <br>会话管理：提供对应用会话的全面操作，包括创建、查询和连接。
+            <br>自定义属性：支持动态定义用户界面字段和选项，满足不同应用的需求。
+            <br>用户友好性：通过查询最后一次提交的信息和可用应用列表，简化用户操作。
+            <br>提供了应用会话的创建、连接和管理能力，并支持复杂的资源配置和多语言环境。
+                <details>
+                <summary> 数据结构</summary>
+                <br>I18nStringProtoType：支持国际化字符串表示，允许直接字符串或包含多语言对象。
+                <br>ConnectToAppRequest 和 ConnectToAppResponse：定义了连接到应用程序的请求和响应：请求包含用户 ID、集群名称和会话 ID。响应包含主机地址、端口、密码及应用程序的连接参数（Web 应用或 VNC）。
+                <br>CreateAppSessionRequest 和 CreateAppSessionResponse：定义了创建应用程序会话的请求和响应：请求支持指定用户、集群、应用 ID、账户、资源分配（核心数、节点数、GPU、内存、最大时间等）、自定义属性等。响应返回作业 ID 和会话 ID。
+                <br>ListAppSessionsRequest 和 ListAppSessionsResponse：定义列出现有应用会话的请求和响应：请求指定用户和集群。响应返回一组应用会话对象，每个对象包含会话 ID、作业 ID、提交时间、应用状态等信息。
+                <br>GetAppMetadataRequest 和 GetAppMetadataResponse：获取应用的元数据信息：请求包含应用 ID 和集群名称。响应返回应用名称、自定义属性（如输入字段类型和选项）、评论等。
+                <br>ListAvailableAppsRequest 和 ListAvailableAppsResponse：获取当前可用应用的列表：请求只需要指定集群。响应返回应用的 ID、名称和图标路径。
+                <br>GetAppLastSubmissionRequest 和 GetAppLastSubmissionResponse：查询某个用户最近一次提交的信息：请求包含用户 ID、集群和应用 ID。响应返回最后一次提交的作业信息（包括提交时间、资源配置等）。
+                </details>
+                <details>
+                <summary> 核心服务接口</summary>
+                <br>I18nStringProtoType：ConnectToApp：用于连接到已存在的应用会话。
+                <br>CreateAppSession：创建新的应用程序会话，并指定所需的资源和自定义参数。
+                <br>ListAppSessions：列出现有的应用程序会话，便于用户查看和管理。
+                <br>GetAppMetadata：获取指定应用的元数据信息，包括属性、名称和说明。
+                <br>ListAvailableApps：获取当前集群支持的所有可用应用列表。
+                <br>GetAppLastSubmission：获取指定应用的最后一次提交信息，用于快速复用配置。
+                </details>
             </details>
             <details>
-            <summary>protos/common/i18n.proto</summary>
-            <br>该 proto 文件定义了用于国际化（i18n）处理的消息类型，主要用于支持多语言环境下的文本显示。
-            <br>I18nObject:I18nObject 包含一个嵌套消息 I18n，用于描述多语言的文本信息。该消息支持三种语言：default：默认语言文本。en：英文文本（可选）。zh_cn：简体中文文本（可选）。
-            <br>I18nStringProtoType:I18nStringProtoType 采用 oneof 来表示两种可能的值：direct_string：直接的字符串（适用于没有多语言需求的场景）。i18n_object：包含多语言支持的 I18nObject，适用于需要多语言支持的场景。
+            <summary>protos/portal/config.proto</summary>
+            <br>一个 gRPC 协议，用于获取集群和节点的资源状态信息。主要功能集中在计算集群中各个分区和节点的资源使用率监控、状态查询以及相关信息的服务接口。
+            <br>资源监控：提供集群分区和节点的详细资源分配与使用情况，包括 CPU、内存、GPU 的分配、空闲状态。
+            <br>状态查询：支持实时查询集群运行状态（例如分区是否可用，节点是空闲还是运行中）。
+            <br>灵活性：支持按分区或节点维度查询，满足多样化的监控需求。
+            <br>高效管理：管理员可通过接口快速定位资源瓶颈或分区异常，优化资源调度。
+                <details>
+                <summary> 数据结构</summary>
+                <br>PartitionInfo（分区信息）：描述计算集群分区的运行状态，包括：分区名称（partition_name）。节点和 CPU、GPU 的总数、运行中、空闲和不可用数量统计。作业的总数、运行中和挂起中的作业数。分区节点利用率百分比（usage_rate_percentage）。
+                                            分区运行状态（PartitionStatus），分为不可用（NOT_AVAILABLE）和可用（AVAILABLE）。
+                <br>NodeInfo（节点信息）：描述集群节点的运行状态，包括：节点名称（node_name）。节点所属分区列表。节点状态（NodeState），分为未知（UNKNOWN）、空闲（IDLE）、运行中（RUNNING）和不可用（NOT_AVAILABLE）。CPU 核心数和分配情况（总数、已分配、空闲）。
+                                        内存容量及分配情况（总量、已分配、空闲，单位为 MB）。GPU 核心数和分配情况（总数、已分配、空闲）。
+                <br>GetClusterInfoRequest 和 GetClusterInfoResponse：请求：指定要查询的集群名称。响应：返回集群名称和其所有分区的资源状态信息（PartitionInfo）。
+                <br>GetClusterNodesInfoRequest 和 GetClusterNodesInfoResponse：请求：集群名称（必填）。可选指定节点名称列表（如果为空，表示查询集群所有节点信息）。响应：返回所有匹配的节点信息列表（NodeInfo）。
+                </details>
+                <details>
+                <summary> 核心服务接口</summary>
+                <br>GetClusterInfo：功能：查询指定集群的分区信息，包括分区名称、节点和资源统计信息、运行状态等。适用场景：用户希望查看某个集群的整体资源使用情况，例如空闲资源数量、分区可用性等。
+                <br>GetClusterNodesInfo：功能：查询指定集群的节点信息，包括节点的运行状态、CPU、GPU 和内存资源的分配和空闲情况。适用场景：用户希望查看某些或所有节点的资源使用详细情况，例如确定空闲的节点用于作业分配。
+                </details>
             </details>
             <details>
-            <summary>protos/common/job.proto</summary>
-            <br>这个 proto 文件定义了一个名为 RunningJob 的消息类型，表示正在运行的作业的详细信息。
-            <br>job_id (string)：作业的唯一标识符。partition (string)：作业所属的分区。name (string)：作业名称。user (string)：提交作业的用户。state (string)：当前作业的状态。running_time (string)：作业的运行时间。nodes (string)：作业使用的计算节点列表。
-            <br>nodes_or_reason (string)：如果作业没有分配到节点，则可能包含作业未分配原因。account (string)：提交作业的账户名。cores (string)：作业请求的核心数。gpus (string)：作业请求的 GPU 数量。qos (string)：作业的质量等级（Quality of Service）。
-            <br>submission_time (string)：作业提交的时间。time_limit (string)：作业的时间限制，格式为 days-hours:minutes:seconds，可以是 "NOT_SET" 或 "UNLIMITED"。working_dir (string)：作业的工作目录。
+            <summary>protos/portal/dashboard.proto</summary>
+            <br>一组 gRPC 服务接口，用于管理和查询用户在门户（Dashboard）中的快捷入口。快捷入口功能使用户能够快速访问常用的页面、Shell 终端或应用程序
+            <br>快捷访问：用户可以通过页面快捷入口快速导航到常用的页面路径。支持集群终端（Shell）入口，方便用户快速连接到目标集群的 Shell 登录节点。提供应用入口，用于启动常用的应用程序。
+            <br>自定义配置：用户可以根据需求自定义其快捷入口列表。支持页面、终端、应用三种类型的入口，满足多样化需求。
+            <br>统一管理：后台服务提供接口管理所有快捷入口数据，支持快捷入口的查询和保存操作。
+            <br>适配图形界面：每个入口都支持与图标库（如 Ant Design）集成，便于前端用户界面的美观与一致性。
+                <details>
+                <summary> 数据结构</summary>
+                <br>PartitionInfo（分区信息）：PageLinkEntry（页面链接入口）：定义一个页面链接快捷入口，包含以下字段：path：页面路径。icon：页面图标的 ID（与 Ant Design 图标库对应）。
+                <br>NodeInfo（节点信息）：ShellEntry（Shell 终端入口）：定义一个 Shell 终端快捷入口，包含以下字段：cluster_id：关联的集群 ID。login_node：Shell 登录节点。icon：Shell 图标的 ID（与 Ant Design 图标库对应）。
+                <br>AppEntry（应用入口）：定义一个应用快捷入口，包含以下字段：app_id：应用的唯一标识。cluster_id：关联的集群 ID。
+                <br>Entry（通用快捷入口）：统一定义了快捷入口的结构，包含以下字段：id：快捷入口的唯一标识。name：快捷入口的名称。entry：快捷入口的类型，支持以下三种：page_link：页面链接入口。shell：Shell 终端入口。app：应用入口。
+                <br>GetQuickEntriesRequest 和 GetQuickEntriesResponse：请求：指定用户的 ID。响应：返回该用户的所有快捷入口列表。
+                <br>SaveQuickEntriesRequest 和 SaveQuickEntriesResponse：请求：指定用户的 ID 和要保存的快捷入口列表。响应：确认保存操作完成，无返回具体内容。
+                </details>
+                <details>
+                <summary> 核心服务接口</summary>
+                <br>GetQuickEntries：功能：获取用户的快捷入口列表。输入：用户 ID。输出：返回该用户设置的快捷入口信息（包括页面链接、Shell 终端和应用入口）。
+                <br>SaveQuickEntries：功能：保存用户的快捷入口列表。输入：用户 ID 和快捷入口列表。输出：保存成功的确认响应。
+                </details>
             </details>
             <details>
-            <summary>protos/common/money.proto</summary>
-            <br>这个 Money 消息在 proto3 语法中用于表示货币金额。
-            <br>positive (bool)该字段表示货币值是正数还是负数。它可以用于表示信用（正数）和借记（负数），或处理退款和支付等场景。
-            <br>yuan (uint64)该字段存储货币的整数部分，假设是以人民币（元）为单位。使用 uint64 类型表示，可以处理较大的金额。
-            <br>decimal_place (uint32)该字段表示货币的精确小数部分，最多可保留四位小数。它通常用于表示“分”的值（人民币单位的百分之一）。比如 12.3456 元就会在这里使用 12 和 3456 分别存储整数和小数部分。
+            <summary>protos/portal/desktop.proto</summary>
+            <br>定义了一个远程桌面管理服务，支持在高性能计算集群环境中为用户创建、连接和管理远程桌面。
+            <br>远程桌面管理：提供创建、连接和关闭远程桌面的完整生命周期管理。允许用户为桌面命名并选择不同的窗口管理器（如 GNOME、KDE）。
+            <br>多集群支持：支持不同集群环境的桌面管理操作。可根据登录节点分类和管理用户桌面。
+            <br>灵活配置：支持查询集群支持的窗口管理器，方便用户根据需求选择。
+            <br>用户友好性：提供快捷的桌面列表查询接口，方便用户查看和管理自己拥有的桌面。
+                <details>
+                <summary> 数据结构</summary>
+                <br>PartitionInfo（分区信息）：CreateDesktopRequest：请求创建一个远程桌面，字段包括：user_id：用户标识。cluster：目标集群标识。login_node：登录节点。wm：桌面窗口管理器的名称。desktop_name：桌面的自定义名称。
+                <br>CreateDesktopResponse：响应成功创建的桌面信息，字段包括：host：桌面所在主机。port：连接端口。password：连接桌面的密码。
+                <br>KillDesktopRequest：请求关闭一个远程桌面，字段包括：user_id：用户标识。cluster：目标集群标识。login_node：登录节点。display_id：桌面显示 ID。
+                <br>KillDesktopResponse：响应关闭操作结果（无具体返回内容）。
+                <br>ConnectToDesktopRequest：请求连接到一个已创建的远程桌面，字段包括：user_id：用户标识。cluster：目标集群标识。login_node：登录节点。display_id：桌面显示 ID。
+                <br>ConnectToDesktopResponse：返回连接信息，字段包括：host：桌面所在主机。port：连接端口。password：连接密码。
+                <br>ListUserDesktopsRequest：请求列出用户当前拥有的远程桌面，字段包括：user_id：用户标识。cluster：目标集群标识。login_node（可选）：指定登录节点，若为空则返回该集群下所有登录节点的桌面。
+                <br>Desktop：定义单个桌面信息，字段包括：display_id：桌面显示 ID。desktop_name：桌面名称。wm：窗口管理器名称。create_time：桌面创建时间。
+                <br>UserDesktops：定义用户的桌面列表，字段包括：host：主机名。desktops：该主机下的桌面列表。
+                <br>ListUserDesktopsResponse：响应用户桌面信息，包含：user_desktops：用户桌面信息的列表。
+                <br>ListAvailableWmsRequest：请求列出集群支持的窗口管理器（WMs），字段包括：cluster：目标集群标识。
+                <br>AvailableWm：定义一个窗口管理器的信息：name：窗口管理器的名称。wm：窗口管理器的标识符。
+                <br>ListAvailableWmsResponse：响应支持的窗口管理器列表：wms：支持的窗口管理器信息列表。
+                </details>
+                <details>
+                <summary> 核心服务接口</summary>
+                <br>CreateDesktop：功能：创建一个远程桌面。输入：用户 ID、目标集群、登录节点、窗口管理器和桌面名称。输出：返回创建的桌面连接信息（主机、端口、密码）。
+                <br>KillDesktop：功能：关闭指定的远程桌面。输入：用户 ID、目标集群、登录节点和桌面显示 ID。输出：确认关闭结果。
+                <br>ConnectToDesktop：功能：获取指定远程桌面的连接信息。输入：用户 ID、目标集群、登录节点和桌面显示 ID。输出：返回桌面的主机、端口和连接密码。
+                <br>ListUserDesktops：功能：列出用户当前在集群中的所有远程桌面。输入：用户 ID、目标集群以及（可选）登录节点。输出：返回用户桌面的详细信息列表。
+                <br>ListAvailableWms：功能：查询集群支持的窗口管理器（WMs）。输入：目标集群标识。输出：返回支持的窗口管理器列表。
+                </details>
             </details>
             <details>
-            <summary>protos/common/sort_order.proto</summary>
-            <br>这是一个简单的 proto3 消息定义，定义了一个名为 SortOrder 的枚举类型，用于表示排序顺序。
-            <br>枚举定义 SortOrderASCEND (值 0): 表示升序排序。DESCEND (值 1): 表示降序排序。
+            <summary>protos/portal/file.proto</summary>
+            <br>定义了一套完整的文件管理与传输服务，支持在分布式集群环境中实现文件的操作、上传、下载以及跨集群传输等功能。
+            <br>通过流式传输、分片管理和实时进度监控等设计，能够高效地支持大数据量的文件操作需求，同时确保文件操作的灵活性和可靠性。
+            <br>集群文件管理：提供文件和目录的增删改查功能，方便用户管理集群存储资源。
+            <br>大文件分片上传：通过初始化、分片上传和合并机制支持大文件的高效传输。
+            <br>高性能计算中的跨集群传输：支持在不同计算集群之间快速传输文件，满足分布式计算需求。
+            <br>流式下载：提供对大文件的分块下载支持，适应低带宽或大规模文件传输场景。
+                <details>
+                <summary> 基础文件操作</summary>
+                <br>Copy：拷贝文件或目录。
+                <br>CreateFile：创建新文件。
+                <br>DeleteDirectory：删除目录。
+                <br>DeleteFile：删除文件。
+                <br>Move：移动或重命名文件/目录。
+                <br>MakeDirectory：创建新目录。
+                <br>Exists：检查文件或目录是否存在。
+                <br>ReadDirectory：读取指定目录内容，支持返回文件信息（名称、类型、大小、修改时间等）。
+                <br>GetHomeDirectory：获取用户在目标集群中的主目录路径。
+                <br>GetFileMetadata：获取指定文件的元信息（大小、类型等）。
+                </details>
+                <details>
+                <summary> 文件上传与下载</summary>
+                <br>InitMultipartUpload：初始化文件分片上传，返回临时存储目录、分片大小和已上传分片信息。
+                <br>Upload：逐步上传文件分片，支持流式传输。
+                <br>MergeFileChunks：合并所有上传完成的文件分片，校验完整性后生成完整文件。
+                <br>Download：下载文件，支持流式传输返回文件内容（以字节块形式分批返回）。
+                </details>
+                <details>
+                <summary> 跨集群文件传输</summary>
+                <br>StartFileTransfer：启动文件从一个集群到另一个集群的传输。
+                <br>QueryFileTransfer：查询当前的文件传输进度，返回目标集群、路径、已传输大小、传输速度等信息。
+                <br>TerminateFileTransfer：中止文件传输任务。
+                <br>CheckTransferKey：校验传输任务的密钥有效性。
+                </details>
+                <details>
+                <summary> 数据结构</summary>
+                <br>文件信息（FileInfo）：字段说明：name：文件/目录名称。type：文件类型（FILE 或 DIR）。mtime：修改时间。mode：权限模式（如 UNIX 文件权限）。size：文件大小（字节）。
+                <br>传输信息（TransferInfo）：字段说明：to_cluster：目标集群名称。file_path：文件路径。transfer_size_kb：已传输大小（单位：KB）。progress：传输进度（百分比）。speed_k_bps：传输速度（单位：KB/s）。
+                </details>
+                <details>
+                <summary> 错误处理</summary>
+                <br>常见错误类型及说明：NOT_FOUND：集群或路径不存在。ALREADY_EXISTS：文件或目录已存在。PERMISSION_DENIED：没有访问权限。INTERNAL：内部错误（如命令失败，具体原因存储于 stderr）。
+                </details>
             </details>
+            <details>
+            <summary>protos/portal/job.proto</summary>
+            <br>定义了一套用于高性能计算（HPC）集群环境的作业管理服务，支持从作业提交、查询到模板管理的一整套操作。
+            <br>高性能计算作业管理：用户可以提交、取消、查询作业，并管理作业状态。
+            <br>模板化作业配置：提供模板功能，便于重复配置常见作业需求。
+            <br>多用户、多账户支持：支持按账户或用户管理不同状态的资源，灵活应对复杂的用户环境。
+            <br>跨集群操作支持：支持对不同集群的作业管理，适合分布式计算环境。
+                <details>
+                <summary> 作业管理功能</summary>
+                <br>SubmitJob：提交一个新的作业，支持指定分区、节点数、核心数、最长运行时间等配置。
+                <br>SubmitFileAsJob：通过脚本文件直接提交作业。
+                <br>CancelJob：取消指定作业。
+                <br>ListRunningJobs：列出当前正在运行的作业信息。
+                <br>ListAllJobs：查询所有作业，支持按时间范围筛选。
+                <br>JobInfo（作业信息结构）：字段说明：job_id：作业编号。name：作业名称。state：作业状态（如运行中、完成、失败等）。elapsed：已运行时间。time_limit：最长运行时间。submit_time、start_time、end_time：提交、启动和结束时间。reason：作业状态的原因（如失败原因）。
+                                            用途：便于用户查看作业执行的详细状态和运行历史。
+                </details>
+                <details>
+                <summary> 作业模板管理</summary>
+                <br>ListJobTemplates：列出用户的所有作业模板。
+                <br>GetJobTemplate：获取指定模板的详细内容。
+                <br>DeleteJobTemplate：删除指定作业模板。
+                <br>RenameJobTemplate：重命名作业模板。
+                <br>模板内容：
+                <br>JobTemplate（作业模板结构）：字段说明：job_name：作业名称。node_count、core_count、gpu_count：节点数、核心数和 GPU 数量。max_time：最长运行时间及其单位（默认单位为分钟）。command：作业执行命令。output、error_output：输出和错误输出文件路径。
+                                working_directory：工作目录。comment：模板注释。
+                <br>用途：通过模板快速重复提交相似配置的作业，提高效率。
+                </details>
+                <details>
+                <summary> 用户与账户管理</summary>
+                <br>ListAccounts：列出用户在集群中的账户列表，可根据账户状态（如已阻塞、未阻塞）进行筛选。
+                <br>AccountStatusFilter：ALL：返回所有账户。BLOCKED_ONLY：仅返回被阻塞的账户。UNBLOCKED_ONLY：仅返回未被阻塞的账户。
+                </details>
+                <details>
+                <summary> 数据结构</summary>
+                <br>作业时间单位（TimeUnit）类型：MINUTES（分钟）。HOURS（小时）。DAYS（天）。
+                <br>作业信息（JobInfo）：包括作业的基本信息和运行状态（例如 job_id、state、elapsed、reason 等）。
+                <br>作业模板信息（JobTemplateInfo）：描述模板的基本属性，如模板 ID、名称、提交时间及备注。
+                </details>
+                <details>
+                <summary> 错误处理</summary>
+                <br>NOT_FOUND：集群或作业未找到。
+                <br>INTERNAL：调度器内部错误，具体错误信息可通过 details 字段查看。
+                <br>BLOCKED_ACCOUNTS_ONLY/UNBLOCKED_ACCOUNTS_ONLY：账户状态限制。
+                </details>
+            </details>
+            <details>
+            <summary>protos/portal/shell.proto</summary>
+            <br>定义了一种双向流式通信的服务，用于在高性能计算（HPC）环境中实现 远程交互式 Shell 会话。
+            <br>远程终端访问：支持 HPC 集群用户通过远程 Shell 登录节点执行命令和操作文件。
+            <br>实时交互：提供低延迟的双向通信，支持实时接收命令输出和调整窗口大小。
+            <br>动态窗口调整：用户可根据终端需求随时修改窗口的大小（行数和列数）。
+            <br>安全会话管理：支持基于用户 ID 和集群环境的会话隔离，确保多用户操作的安全性。
+                    <details>
+                    <summary> ShellRequest（请求消息）</summary>
+                    <br>ShellRequest 提供用户向服务端发送的各种操作消息，包括以下几种类型：
+                        <details>
+                        <summary> Connect（连接会话）</summary>
+                        <br>用途：启动一个远程 Shell 会话。
+                        <br>字段说明：cluster：目标集群名称。login_node：指定登录节点。user_id：用户 ID。cols 和 rows：终端窗口的列数和行数（可选）。path：远程登录后的默认路径（可选）。
+                        </details>
+                        <details>
+                        <summary> Resize（调整终端大小）</summary>
+                        <br>用途：在会话中动态调整终端窗口大小。
+                        <br>字段说明：cols 和 rows：新的列数和行数。
+                        </details>
+                        <details>
+                        <summary> Data（发送数据）</summary>
+                        <br>用途：向远程终端发送二进制数据（如用户输入的命令）。
+                        </details>
+                        <details>
+                        <summary> Disconnect（断开连接）</summary>
+                        <br>用途：结束当前 Shell 会话。
+                        </details>
+                    </details>
+                    <details>
+                    <summary> ShellResponse（响应消息）</summary>
+                    <br>ShellResponse 用于服务端返回给客户端的消息，包含以下几种类型：
+                        <details>
+                        <summary> Data（数据）</summary>
+                        <br>用途：将远程终端返回的二进制数据发送给客户端。
+                        <br>字段说明：data：二进制数据内容。
+                        </details>
+                        <details>
+                        <summary> Exit（退出信息）</summary>
+                        <br>用途：通知客户端会话已结束，并提供退出的状态信息。
+                        <br>字段说明：code（可选）：退出码。signal（可选）：退出信号信息。
+                        </details>
+                    </details>
+                    <details>
+                    <summary> ShellService</summary>
+                    <br>说明：通过双向流式通信实现客户端与服务端之间的实时交互。
+                        <details>
+                        <summary> 流程：</summary>
+                        <br>客户端通过 Connect 消息启动会话。
+                        <br>会话期间，客户端可以动态发送 Data（用户输入命令）或 Resize（调整终端大小）。
+                        <br>服务端通过 Data 返回终端的输出，或通过 Exit 通知客户端会话结束。
+                        <br>客户端发送 Disconnect 结束会话。
+                        </details>
+                    </details>
+            </details>
+        </details>
+        <details>
+        <summary> protos/server</summary>
+               <details>
+                <summary> protos/server/account.proto</summary>
+                <br>该协议定义了一套 账户管理服务，支持对租户（Tenant）下的账户进行 创建、状态管理、白名单管理、账户查询 等操作，适用于高性能计算（HPC）环境中的租户和账户控制。
+                <br>资源配额与限制：通过封锁和白名单功能，确保账户资源使用符合业务需求。
+                <br>财务管理：支持基于账户余额的封锁阈值动态调整，提高资源利用效率。
+                <br>多租户支持：每个租户可以独立管理账户，方便在多用户环境中扩展。
+                       <details>
+                       <summary> 功能模块</summary>
+                               <details>
+                                <summary> 账户管理</summary>
+                                <br>创建账户：接口：CreateAccount用途：为指定租户创建账户，指定账户所有者。参数：租户名称、账户名称、所有者 ID，以及可选的备注信息。响应：创建成功或失败（例如账户已存在、用户不存在）。
+                                <br>查询账户：接口：GetAccounts用途：支持按租户名称或账户名称筛选查询账户信息，也可返回所有账户。响应：包含账户状态（正常、冻结、管理员封锁）、余额、用户数量等信息。
+                                </details>
+                               <details>
+                                <summary> 账户状态控制</summary>
+                                <br>封锁账户：接口：BlockAccount用途：手动封锁指定账户，账户无法继续使用。响应：支持返回封锁结果（如已封锁、在白名单中等）。
+                                <br>解封账户：接口：UnblockAccount用途：解除账户封锁状态，使其恢复使用。响应：指示解封是否成功。
+                                </details>
+                               <details>
+                                <summary> 账户白名单管理</summary>
+                                <br>添加账户至白名单：接口：WhitelistAccount用途：将指定账户加入白名单，避免其因余额不足等被封锁。参数：支持设置备注、白名单过期时间等。响应：指示操作是否成功。
+                                <br>从白名单移除账户：接口：DewhitelistAccount用途：将账户从白名单移除，使其受正常规则限制。响应：指示操作是否成功。
+                                <br>获取白名单账户：接口：GetWhitelistedAccounts用途：查询租户下当前在白名单中的账户信息。响应：包含账户名、所有者信息、余额、过期时间等。
+                                </details>
+                               <details>
+                                <summary> 阈值设置</summary>
+                                <br>设置封锁阈值：接口：SetBlockThreshold用途：为账户设置自定义的余额封锁阈值。参数：阈值金额。响应：指示操作是否成功。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 数据结构</summary>
+                               <details>
+                                <summary> 账户信息结构：Account</summary>
+                                <br>账户状态：NORMAL（正常）、FROZEN（冻结）、BLOCKED_BY_ADMIN（被管理员封锁）。
+                                <br>余额信息：当前余额、封锁阈值、自定义默认阈值。
+                                <br>显示状态：包括正常、冻结、管理员封锁、低于封锁阈值等。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务接口总结</summary>
+                               <details>
+                                <summary> 账户操作</summary>
+                                <br>创建账户：CreateAccount
+                                <br>查询账户：GetAccounts
+                                </details>
+                               <details>
+                                <summary> 状态管理</summary>
+                                <br>封锁账户：BlockAccount
+                                <br>解封账户：UnblockAccount
+                                </details>
+                               <details>
+                                <summary> 白名单管理</summary>
+                                <br>添加至白名单：WhitelistAccount
+                                <br>从白名单移除：DewhitelistAccount
+                                <br>获取白名单账户：GetWhitelistedAccounts
+                                </details>
+                               <details>
+                                <summary> 阈值设置</summary>
+                                <br>设置封锁阈值：SetBlockThreshold
+                                </details>
+                        </details>
+                </details>
         </details>
     </details>
 </details>
-
 
 

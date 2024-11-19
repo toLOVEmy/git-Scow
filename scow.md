@@ -1306,6 +1306,254 @@
                 </details>
         </details>
     </details>
+    <details>
+   <summary> apps</summary>
+       <details>
+        <summary>apps/ai</summary>
+        <br>主要实现： next + trpc + mikro-orm + openApi。支持trpc和http 两种调用
+            <details>
+            <summary>apps/ai/eslint.config.js</summary>
+            <br>一个 ESLint 配置文件，它将多个 ESLint 配置文件合并，并自定义了一些规则。
+            <br>该配置文件在一个 React 和 TypeScript 项目中使用 ESLint 来检查代码质量，同时通过禁用一些规则来避免过于严格的检查，适应项目中的特定需求。
+                <details>
+                <summary>基础配置</summary>
+                <br>base 引入了来自 ../../eslint.config 的基础配置。
+                <br>react 引入了来自 @ddadaal/eslint-config/react 的 React 配置。
+                </details>
+                <details>
+                <summary>规则覆盖</summary>
+                <br>通过 module.exports 导出了一个配置数组，首先包含了 base 和 react 配置，随后覆盖了一些 TypeScript 相关的 ESLint 规则。
+                </details>
+                <details>
+                <summary>禁用的规则</summary>
+                <br>通过 rules 对象，禁用了以下 TypeScript 相关的规则：
+                <br>@typescript-eslint/no-floating-promises: 禁用浮动的 Promise。
+                <br>@typescript-eslint/no-unsafe-enum-comparison: 禁用不安全的枚举比较。
+                <br>@typescript-eslint/no-misused-promises: 禁用误用 Promise 的情况。
+                <br>@typescript-eslint/only-throw-error: 禁用只抛出 Error 对象的规则。
+                <br>@typescript-eslint/prefer-promise-reject-errors: 禁用建议使用 Promise.reject 时必须传递 Error 对象的规则。
+                </details>
+            </details>
+           <details>
+            <summary>apps/ai/launch.sh</summary>
+            <br>备份并替换 .next 目录中的某些路径，同时根据 NEXT_PUBLIC_BASE_PATH 变量的值修改内容，并启动一个 pnpm 服务。
+            <br>根据 NEXT_PUBLIC_BASE_PATH 环境变量来动态修改 .next 目录中的路径配置，以便适应不同的部署环境。同时，它确保 .next 目录的备份和恢复，使得脚本在多次执行时能够安全恢复先前的状态。
+                <details>
+                <summary>备份和恢复 .next 目录</summary>
+                <br>检查 .next.backup 目录是否存在：
+                <br>如果 .next.backup 存在，删除当前的 .next 目录，并将 .next.backup 恢复为 .next 目录。
+                <br>如果 .next.backup 不存在，则将当前的 .next 目录备份为 .next.backup。
+                </details>
+                <details>
+                <summary>设置 BASE_PATH</summary>
+                <br>获取环境变量 NEXT_PUBLIC_BASE_PATH 的值。
+                <br>如果 BASE_PATH 为根路径 /，则将其修改为空字符串 ""，否则保持原值。
+                </details>
+                <details>
+                <summary>路径替换</summary>
+                <br>使用 find 命令遍历 .next 目录中的所有文件（-type f），并使用 sed 进行替换。
+                <br>将文件中的 /@BASE_PATH@/ 替换为 /BASE_PATH/ 或 BASE_PATH（取决于 BASE_PATH 的值）。
+                </details>
+               <details>
+                <summary>启动 Next.js 服务</summary>
+                <br>最后，执行 pnpm serve:next 启动 Next.js 服务。
+                </details>
+            </details>
+           <details>
+            <summary> apps/ai/next.config.mjs</summary>
+            <br>一个 Next.js 配置文件，主要功能是设置基础路径（BASE_PATH）、处理构建时的环境配置，并进行 Webpack 配置，特别是针对 .node 文件的支持和其它优化。
+            <br>主要用于配置 Next.js 应用的基础路径、初始化环境配置（如 WebSocket 代理），以及扩展 Webpack 配置以支持 .node 文件。它还处理了构建过程中需要的特定操作，并对应用中的静态资源进行适当的路径配置。
+                <details>
+                <summary>基础路径（BASE_PATH）的配置</summary>
+                <br>从环境变量中获取 NEXT_PUBLIC_BASE_PATH，如果没有则默认使用根路径 /。
+                <br>该 BASE_PATH 用于设置 Next.js 应用的基础路径，影响应用中的所有路径配置。
+                </details>
+                <details>
+                <summary>构建标识（BUILDING）</summary>
+                <br>判断 process.env.BUILDING 是否为 "1"，如果是则表示当前处于构建过程。这个标识可能用于跳过一些不必要的操作，比如设置 WebSocket 代理。
+                </details>
+                <details>
+                <summary>初始化配置（global.__CONFIG__）</summary>
+                <br>将 BASE_PATH 通过 global.__CONFIG__ 全局变量存储，供应用中其他地方使用。
+                </details>
+                <details>
+                <summary>WebSocket代理的设置</summary>
+                <br> 如果当前不是构建过程中（building为false），代码会通过fetch请求调用一个setup API URL【http://localhost:>port>/api/setup】，用于初始化 WebSocket 代理服务器。
+                </details>
+                <details>
+                <summary> Next.js 配置（nextConfig）</summary>
+                <br>配置了 styled-components 编译支持。
+                <br>禁用了 SWC 压缩（swcMinify: false），可能是因为需要调试或不需要额外压缩。
+                <br>配置了 basePath 和 assetPrefix，这将影响资源的引用路径。
+                <br>设置了 Webpack 配置：
+                <br>extensionAlias：允许解析 .ts, .tsx, .js, .jsx 文件扩展名，提升开发效率。
+                <br>针对 .node 文件添加了支持，使其能够在 Next.js 中正确加载。特别地，使用了 nextjs-node-loader 来处理 .node 文件。
+                </details>
+               <details>
+                <summary> 忽略 URL 末尾的斜杠重定向（skipTrailingSlashRedirect: true）</summary>
+                <br>该配置会使 Next.js 忽略 URL 末尾的斜杠，以避免不必要的重定向。
+                </details>
+               <details>
+                <summary> 转译依赖（transpilePackages）</summary>
+                <br>配置了转译 antd 和 @ant-design/icons 这两个包，确保它们在构建过程中能够被正确处理。
+                </details>
+            </details>
+           <details>
+            <summary> apps/ai/package.json</summary>
+            <br>这是一个包含 @scow/ai 项目的 package.json 文件。该文件描述了项目的元数据、依赖关系、构建和运行脚本。
+            <br>这个 package.json 配置了一个基于 Next.js 构建的项目，结合了前端 UI 库（如 Ant Design）和后端 ORM（MikroORM）进行数据库操作。项目包括了 TypeScript 支持、构建和部署脚本，并配置了 tRPC 用于创建类型安全的 API。
+                <details>
+                <summary>项目基本信息</summary>
+                <br>name: @scow/ai
+                <br>version: 0.2.6
+                <br>private: true 表示该项目为私有项目，不会发布到 npm。
+                <br>files: 指定了发布时包含的文件和目录，如 .next、public、next.config.mjs 等。
+                </details>
+                <details>
+                <summary>脚本</summary>
+                <br>dev: 启动开发模式并使用模拟数据 (NEXT_PUBLIC_USE_MOCK=1)，通过 next dev 启动 Next.js 开发服务器。
+                <br>dev: 启动开发模式，但不使用模拟数据 (NEXT_PUBLIC_USE_MOCK=0)。
+                <br>serve: 使用 start.mjs 启动项目。
+                <br>serve: 启动 Next.js 应用。
+                <br>build: 执行构建命令，先执行 build:next。
+                <br>build: 清理备份并进行 Next.js 构建（next build）。
+                <br>build: 编译 TypeScript 代码并创建 TypeScript 的别名。
+                <br>orm: 使用 MikroORM 命令行工具连接到数据库。
+                <br>ormCreate: 创建数据库迁移。
+                <br>ormUp: 应用数据库迁移。
+                <br>lint: 运行 ESLint 检查代码。
+                </details>
+                <details>
+                <summary>依赖项(常用依赖)</summary>
+                <br>next: 用于构建 Next.js 应用。
+                <br>react 和 react-dom: React 和 React DOM 库。
+                <br>@ant-design/icons, antd: Ant Design 图标和 UI 库。
+                <br>@mikro-orm/core, @mikro-orm/mysql: 使用 MikroORM 进行数据库操作，支持 MySQL。
+                <br>@trpc/client, @trpc/server: tRPC 客户端和服务端库，用于创建类型安全的 API。
+                <br>superjson, zod: 数据验证和序列化工具。
+                </details>
+                <details>
+                <summary>依赖项(开发依赖)</summary>
+                <br> @types/*: 类型声明包，用于增强 TypeScript 开发体验。
+                <br> fs-extra: 文件系统操作的扩展库。
+                <br> nextjs-node-loader: 支持在 Next.js 中加载 .node 文件。
+                <br> jest-environment-jsdom: Jest 的 Jsdom 环境，用于前端测试。
+                <br> webpack: 打包工具。
+                </details>
+                <details>
+                <summary> MikroORM 配置</summary>
+                <br>配置了 MikroORM，使用 TypeScript 文件来加载数据库配置。
+                <br>useTsNode 表示支持 TypeScript 执行。
+                </details>
+            </details>
+           <details>
+            <summary> apps/ai/start.mjs</summary>
+            <br>这是一个用于处理项目构建和启动过程的脚本。
+            <br>这个脚本确保了在部署或开发过程中，基础路径的替换和 .next 目录的备份恢复过程是自动化的，简化了部署操作。
+            <br>备份处理：确保每次执行脚本时，.next 目录可以恢复到最新的备份状态。
+            <br>环境变量替换：动态替换文件中的基础路径，以便项目在不同环境中运行时适配不同的路径。
+            <br>命令执行：通过 execSync 同步执行 npm run serve:next，确保 Next.js 应用能够启动，并带上正确的环境配置。
+                <details>
+                <summary>备份和恢复 .next 文件夹</summary>
+                <br>如果存在 .next.backup 目录（备份目录），则删除现有的 .next 目录，并将备份目录中的 .next 复制过来。
+                <br>如果备份目录不存在，则将当前的 .next 目录复制到 .next.backup 作为备份。
+                </details>
+                <details>
+                <summary>处理 BASE_PATH 环境变量</summary>
+                <br>读取环境变量 NEXT_PUBLIC_BASE_PATH 来确定基础路径（BASE_PATH）。
+                <br>如果 BASE_PATH 是 /，则将其更改为空字符串 ""，否则保留原值。
+                </details>
+                <details>
+                <summary>替换 .next 目录下的文件中的 @BASE_PATH@</summary>
+                <br>使用 replace-in-file 库在 .next 目录中的所有文件内查找 /@BASE_PATH@ 字符串，并将其替换为实际的 BASE_PATH 值。
+                </details>
+                <details>
+                <summary>启动 serve:next 命令</summary>
+                <br> 使用 npm run serve:next 命令启动 Next.js 应用，并传递环境变量 NEXT_PUBLIC_RUNTIME_BASE_PATH，确保应用在运行时能够使用正确的基础路径。
+                </details>
+            </details>
+           <details>
+            <summary> apps/ai/tsconfig.build.json</summary>
+            <br>这是一个 TypeScript 配置文件（tsconfig.json）的扩展配置
+            <br>这个配置主要用于 TypeScript 项目中，确保特定目录（如 src 和 migrations）下的 TypeScript 文件会被正确编译。
+                <details>
+                <summary>继承</summary>
+                <br>该配置通过 extends 继承了另一个 tsconfig.json 文件的配置，使得可以重用父文件的设置。
+                </details>
+                <details>
+                <summary>包含文件</summary>
+                <br>通过 include 字段，指定了项目中需要被 TypeScript 编译器处理的文件：
+                <br>所有 src 目录下的 .ts 文件（包括子目录）。
+                <br>所有 migrations 目录下的 .ts 文件。
+                </details>
+            </details>
+           <details>
+            <summary> apps/ai/tsconfig.json</summary>
+            <br>这是一个 TypeScript 配置文件（tsconfig.json）的内容
+            <br>这个配置适用于一个 TypeScript 项目，尤其是包含 Next.js 和 Node.js 环境的项目。它启用了严格的类型检查和现代 ECMAScript 特性支持，同时还提供了路径映射和对装饰器的支持。
+                <details>
+                <summary>compilerOptions（编译选项）</summary>
+                <br>target: 编译输出的目标 JavaScript 版本为 es2020。
+                <br>lib: 引入了 dom、dom.iterable 和 esnext 库，表示代码将支持现代浏览器和最新的 ECMAScript 特性。
+                <br>allowJs: 允许在项目中混合 JavaScript 文件与 TypeScript 文件。
+                <br>skipLibCheck: 跳过库文件的类型检查，以提高编译性能。
+                <br>strict: 启用所有严格的类型检查选项。
+                <br>experimentalDecorators: 启用装饰器的实验性支持。
+                <br>emitDecoratorMetadata: 在编译过程中生成装饰器的元数据，通常与 experimentalDecorators 一起使用。
+                <br>forceConsistentCasingInFileNames: 强制文件名大小写一致性。
+                <br>noEmit: 不生成输出文件，通常用于检查类型而不进行编译。
+                <br>esModuleInterop: 启用对 ES 模块与 CommonJS 模块之间的兼容性。
+                <br>module: 模块系统使用 commonjs。
+                <br>moduleResolution: 使用 node 模块解析策略，这对于 Node.js 项目是常见的设置。
+                <br>resolveJsonModule: 允许导入 .json 文件作为模块。
+                <br>isolatedModules: 启用此选项以确保每个文件都是独立模块，这对于支持像 ts-node 这样的工具非常重要。
+                <br>jsx: 让 TypeScript 保留 JSX 语法不做转换，通常用于 React 项目。
+                <br>incremental: 启用增量编译，以提高后续编译的速度。
+                <br>baseUrl: 设置项目的基目录，通常用来简化模块导入路径。当前设置为当前目录（.）。
+                <br>plugins: 启用 next 插件，以便与 Next.js 的配置兼容。
+                </details>
+                <details>
+                <summary>include（包含文件）</summary>
+                <br>指定 TypeScript 应该包含的文件和目录：
+                <br>src 目录下的所有 TypeScript 文件。
+                <br>.next/types/**/*.ts 目录下的类型定义文件。
+                </details>
+               <details>
+                <summary>exclude（排除文件）</summary>
+                <br>排除了 node_modules 目录，通常用于防止将第三方依赖项纳入编译。
+                </details>
+               <details>
+                <summary>paths（路径映射）</summary>
+                <br>配置了 src/* 路径的映射，使得可以通过 src/* 直接引用 src/ 目录下的文件。
+                </details>
+               <details>
+                <summary>ts-node（ts-node 配置）</summary>
+                <br>require: 在运行时加载 tsconfig-paths/register，以支持路径映射。
+                <br>preferTsExts: 优先使用 TypeScript 文件扩展名（.ts 和 .tsx）。
+                </details>
+            </details>
+            <details>
+            <summary> apps/ai/tsconfig.server.json</summary>
+            <br>这是一个 TypeScript 配置文件（tsconfig.build.json），它扩展了基础的 tsconfig.json 配置，并添加了一些构建相关的设置。
+            <br>这个配置文件主要用于构建过程，它继承了基础的 tsconfig.json 配置，并且对输出目录 (outDir)、是否生成文件 (noEmit)，以及路径映射（paths）进行了调整。这个配置通常用于构建 TypeScript 项目，将编译后的文件输出到 build 目录中，并允许使用简化的模块导入路径。
+                <details>
+                <summary>extends</summary>
+                <br>extends: "./tsconfig.json": 该配置文件继承自 tsconfig.json 文件，因此会自动应用 tsconfig.json 中的所有设置，并在此基础上进行扩展和修改。
+                </details>
+                <details>
+                <summary>compilerOptions（编译选项）</summary>
+                <br>outDir: 指定编译后的输出目录为 build，即 TypeScript 编译后生成的 JavaScript 文件将存放在 build 目录中。
+                <br>noEmit: 设置为 false，表示 TypeScript 会生成输出文件，而不是仅仅检查类型。通常在开发时，noEmit 为 true，用于仅进行类型检查，不生成实际的文件。设置为 false 后，编译器会生成 JavaScript 文件。
+                    <details>
+                    <summary>paths</summary>
+                    <br>这是路径映射的配置，用来简化模块导入。
+                    <br>src/* 映射到 src/*，这意味着可以通过 src/ 来访问 src 目录下的文件。
+                    <br>server/* 映射到 server/*，同理，允许通过 server/ 路径访问 server 目录下的文件。
+                    </details>
+                </details>
+            </details>
+        </details>
+    </details>
 </details>
 
 

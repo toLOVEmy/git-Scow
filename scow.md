@@ -817,6 +817,290 @@
                                 </details>
                         </details>
                 </details>
+                <details>
+                <summary> protos/server/admin.proto</summary>
+                <br>用于平台管理服务，包括存储配额管理、用户数据导入、集群用户查询、数据同步、以及统计信息获取等功能，适用于多租户、高性能计算平台的管理和维护。
+                <br>用户和账户管理：批量管理账户与用户，支持灵活的数据导入和同步。
+                <br>资源配额控制：动态调整存储配额，满足用户需求并优化资源分配。
+                <br>系统维护：自动化同步账户和用户阻塞状态，确保与调度器一致性。
+                <br>运营统计：提供用户、账户和租户的增长趋势，支持平台管理决策。
+                <br>该协议覆盖了存储管理、账户管理、数据同步及统计分析等关键功能
+                       <details>
+                       <summary> 功能模块</summary>
+                               <details>
+                                <summary> 存储配额管理</summary>
+                                <br>修改存储配额：接口：ChangeStorageQuota用途：为指定用户调整集群存储配额（增加、减少或直接设定）。参数：用户 ID、集群名称、调整模式（增加、减少、设定）、调整值。响应：返回当前存储配额。
+                                <br>查询存储配额：接口：QueryStorageQuota用途：查询用户在指定集群的当前存储配额。响应：返回当前配额。
+                                </details>
+                               <details>
+                                <summary> 用户和账户管理</summary>
+                                <br>批量导入用户数据：接口：ImportUsers用途：批量导入账户和用户信息。参数：数据包含账户名、用户信息、所有者（可选）等；支持指定白名单标志。响应：返回导入的用户数、账户数，以及未提供用户名的用户数。
+                                <br>查询集群用户：接口：GetClusterUsers用途：查询指定集群中的账户及其用户信息。响应：包含账户状态（已存在、新用户等）以及用户详细信息。
+                                </details>
+                               <details>
+                                <summary> 数据同步</summary>
+                                <br>获取同步信息：接口：GetFetchInfo用途：查询数据同步的状态和调度信息。响应：包括同步状态、计划信息、上次同步时间。
+                                <br>设置同步状态：接口：SetFetchState用途：启用或禁用数据同步。响应：指示操作是否成功。
+                                <br>同步阻塞状态：接口：SyncBlockStatus用途：同步账户及用户的阻塞状态到调度器。响应：包含同步失败的账户和用户信息。
+                                <br>更新阻塞状态：接口：UpdateBlockStatus用途：更新账户及用户的阻塞状态。响应：操作结果。
+                                </details>
+                               <details>
+                                <summary> 统计和管理信息</summary>
+                                <br>获取管理员信息：接口：GetAdminInfo用途：获取平台管理员及财务人员信息。响应：包括管理员 ID 和名称、租户数、账户数、用户数等。
+                                <br>获取统计信息：接口：GetStatisticInfo用途：获取指定时间段内的新增用户、账户、租户统计信息。参数：起始时间、结束时间。响应：返回新增用户数、账户数、租户数等信息。
+                                </details>
+                                <details>
+                                <summary> 作业数据同步</summary>
+                                <br>同步作业数据：接口：FetchJobs用途：同步新作业数据。响应：返回同步的作业数。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 数据结构</summary>
+                               <details>
+                                <summary> 存储配额调整模式：ChangeStorageQuotaMode</summary>
+                                <br>枚举值：INCREASE（增加）、DECREASE（减少）、SET（直接设定）。
+                                </details>
+                               <details>
+                                <summary> 账户和用户信息结构</summary>
+                                <br>ClusterAccountInfo：包含账户名、用户列表、所有者信息、阻塞状态等。状态：已存在、新账户、新用户等。
+                                <br>UserInAccount：用户 ID、用户名及阻塞状态。
+                                <br>阻塞同步信息：SyncBlockStatusResponse：包含阻塞失败的账户、用户，以及未解除阻塞的账户信息。
+                                </details>
+                               <details>
+                                <summary> 统计信息</summary>
+                                <br>时间范围内的用户、账户、租户总数及新增数量。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务接口总结</summary>
+                               <details>
+                                <summary> 存储管理</summary>
+                                <br>修改存储配额：ChangeStorageQuota
+                                <br>查询存储配额：QueryStorageQuota
+                                </details>
+                               <details>
+                                <summary> 用户与账户管理</summary>
+                                <br>批量导入用户：ImportUsers
+                                <br>查询集群用户：GetClusterUsers
+                                </details>
+                               <details>
+                                <summary> 数据同步</summary>
+                                <br>获取同步信息：GetFetchInfo
+                                <br>设置同步状态：SetFetchState
+                                <br>同步阻塞状态：SyncBlockStatus
+                                <br>更新阻塞状态：UpdateBlockStatus
+                                </details>
+                               <details>
+                                <summary> 统计与管理</summary>
+                                <br>获取管理员信息：GetAdminInfo
+                                <br>获取统计信息：GetStatisticInfo
+                                </details>
+                               <details>
+                                <summary> 作业同步</summary>
+                                <br>同步作业数据：FetchJobs
+                                </details>
+                        </details>
+                </details>
+                <details>
+                <summary> protos/server/charging.proto</summary>
+                <br>定义了一个关于租户和账户财务操作的系统，主要包括充值、消费、记录查询等功能。
+                <br>支持多种目标类型（账户、租户或全局）。
+                <br>分页与统计功能细化，便于处理大规模数据。
+                <br>统一接口，支持灵活扩展（如支持元数据传递）。
+                       <details>
+                       <summary> 功能模块</summary>
+                               <details>
+                                <summary> 充值与支付</summary>
+                                <br>Pay（支付）输入：支付金额、操作员ID、租户名（可选账户名）、支付类型、备注、IP地址。输出：支付前后的余额。
+                                <br>Charge（充值）：输入：充值金额、租户名（可选账户名）、充值类型、备注、用户ID（可选）。输出：充值前后的余额。
+                                </details>
+                               <details>
+                                <summary> 余额查询</summary>
+                                <br>GetBalance（查询余额）输入：租户名（可选账户名）。输出：账户或租户的余额。
+                                </details>
+                               <details>
+                                <summary> 记录管理</summary>
+                                    <details>
+                                    <summary> 消费记录</summary>
+                                    <br>GetPaginatedChargeRecords（分页查询消费记录）：支持按用户、账户或租户查询，提供时间范围、类型过滤、分页、排序等功能。输出：记录列表。
+                                    <br>GetChargeRecordsTotalCount（消费记录统计）：返回消费总金额及记录总数。
+                                    </details>
+                                   <details>
+                                    <summary> 充值记录</summary>
+                                    <br>GetPaymentRecords（查询充值记录）：支持按账户、租户或所有租户查询充值记录。输出：记录列表及总金额。
+                                    </details>
+                                </details>
+                               <details>
+                                <summary> 统计与分析</summary>
+                                    <details>
+                                    <summary> 每日统计</summary>
+                                    <br>GetDailyCharge（每日消费统计）：按时区统计每天的消费金额。
+                                    <br>GetDailyPay（每日充值统计）：按时区统计每天的充值金额。
+                                    </details>
+                                   <details>
+                                    <summary> Top排行榜</summary>
+                                    <br>GetTopChargeAccount（充值金额最多的账户）：返回充值金额排名靠前的账户及金额。
+                                    <br>GetTopPayAccount（消费金额最多的账户）：返回消费金额排名靠前的账户及金额。
+                                    </details>
+                                </details>
+                               <details>
+                                <summary> 类型与支持</summary>
+                                <br>GetAllPayTypes（获取支持的支付类型）：返回所有支持的支付方式。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 数据结构</summary>
+                               <details>
+                                <summary> 核心实体</summary>
+                                <br>ChargeRecord：消费记录，包括时间、金额、备注等。
+                                <br>PaymentRecord：充值记录，包括时间、金额、操作员等。
+                                <br>DailyAmount：每日统计数据，包含日期和金额。
+                                </details>
+                               <details>
+                                <summary> 查询目标</summary>
+                                <br>AccountOfTenantTarget：指定租户和账户。
+                                <br>AccountsOfTenantTarget：指定租户下多个账户。
+                                <br>TenantTarget：指定租户。
+                                <br>AllTenantsTarget：所有租户。
+                                </details>
+                               <details>
+                                <summary> 统计信息</summary>
+                                <br>时间范围内的用户、账户、租户总数及新增数量。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务定义</summary>
+                               <details>
+                                <summary> ChargingService</summary>
+                                <br>提供所有充值、支付、余额查询及记录管理功能。
+                                <br>标注了废弃接口（如：GetChargeRecords），并推荐使用新的分页或统计接口。
+                                </details>
+                        </details>
+                </details>
+                <details>
+                <summary> protos/server/config.proto</summary>
+                <br>定义了与集群管理相关的服务，包括集群的分区查询、集群激活/停用等功能。
+                <br>废弃接口提醒：部分接口已被废弃，推荐使用新接口。
+                <br>集群状态管理：提供集群的激活和停用管理，以及查看集群的运行时信息。
+                <br>分区查询：支持根据账户、用户及集群查询可用的分区信息。
+                       <details>
+                       <summary> 集群分区查询</summary>
+                               <details>
+                                <summary> GetAvailablePartitions（查询可用分区）</summary>
+                                <br>已废弃，原功能为查询账户下可用的集群分区。
+                                <br>输入：账户名、用户ID。
+                                <br>输出：包含集群和分区信息的响应。
+                                </details>
+                               <details>
+                                <summary> GetAvailablePartitionsForCluster（查询特定集群的分区）</summary>
+                                <br>已废弃，原功能为查询某个集群下的分区。
+                                <br>输入：集群名、账户名、用户ID。
+                                <br>输出：指定集群下的分区列表。
+                                </details>
+                        </details>
+                       <details>
+                        <summary> 功能模块</summary>
+                               <details>
+                                <summary> 集群分区查询</summary>
+                                <br>GetAvailablePartitions（查询可用分区）：已废弃，原功能为查询账户下可用的集群分区。输入：账户名、用户ID。输出：包含集群和分区信息的响应。
+                                </details>
+                               <details>
+                                <summary> 集群运行状态管理</summary>
+                                <br>GetClustersRuntimeInfo（获取集群运行时信息）输入：无。输出：集群的当前运行状态（激活或停用），及最后的激活操作记录。
+                                <br>ActivateCluster（激活集群）输入：集群ID、操作员ID。输出：集群是否成功激活。
+                                <br>DeactivateCluster（停用集群）输入：集群ID、操作员ID、停用备注（可选）。输出：集群是否成功停用。
+                                </details>
+                        </details>
+                        <details>
+                       <summary> 数据结构</summary>
+                               <details>
+                                <summary> Partition（分区信息）</summary>
+                                <br>包含内存、核心数、GPU 数量、节点数、QoS（服务质量）、描述等属性。
+                                </details>
+                               <details>
+                                <summary> ClusterPartitions（集群分区）</summary>
+                                <br>包含集群名称和对应的多个分区。
+                                </details>
+                               <details>
+                                <summary> ClusterRuntimeInfo（集群运行时信息）</summary>
+                                <br>包括集群ID、激活状态（激活或停用）、最后一次操作记录和更新时间。
+                                </details>
+                                <details>
+                                <summary> LastActivationOperation（最后激活操作）</summary>
+                                <br>包含操作员ID和停用备注（如果有）。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务定义</summary>
+                               <details>
+                                <summary>ConfigService</summary>
+                                <br>提供集群相关的操作，包括获取分区信息、查询集群状态、激活和停用集群。
+                                <br>废弃的接口：GetAvailablePartitions 和 GetAvailablePartitionsForCluster 被标记为废弃，推荐使用新的集群配置接口。
+                                </details>
+                        </details>
+                </details>
+                <details>
+                <summary> protos/server/export.proto</summary>
+                <br>
+                <br>
+                <br>
+                <br>
+                       <details>
+                       <summary> 集群分区查询</summary>
+                               <details>
+                                <summary> GetAvailablePartitions（查询可用分区）</summary>
+                                <br>已废弃，原功能为查询账户下可用的集群分区。
+                                <br>输入：账户名、用户ID。
+                                <br>输出：包含集群和分区信息的响应。
+                                </details>
+                               <details>
+                                <summary> GetAvailablePartitionsForCluster（查询特定集群的分区）</summary>
+                                <br>已废弃，原功能为查询某个集群下的分区。
+                                <br>输入：集群名、账户名、用户ID。
+                                <br>输出：指定集群下的分区列表。
+                                </details>
+                        </details>
+                       <details>
+                        <summary> 功能模块</summary>
+                               <details>
+                                <summary> 集群分区查询</summary>
+                                <br>GetAvailablePartitions（查询可用分区）：已废弃，原功能为查询账户下可用的集群分区。输入：账户名、用户ID。输出：包含集群和分区信息的响应。
+                                </details>
+                               <details>
+                                <summary> 集群运行状态管理</summary>
+                                <br>GetClustersRuntimeInfo（获取集群运行时信息）输入：无。输出：集群的当前运行状态（激活或停用），及最后的激活操作记录。
+                                <br>ActivateCluster（激活集群）输入：集群ID、操作员ID。输出：集群是否成功激活。
+                                <br>DeactivateCluster（停用集群）输入：集群ID、操作员ID、停用备注（可选）。输出：集群是否成功停用。
+                                </details>
+                        </details>
+                        <details>
+                       <summary> 数据结构</summary>
+                               <details>
+                                <summary> Partition（分区信息）</summary>
+                                <br>包含内存、核心数、GPU 数量、节点数、QoS（服务质量）、描述等属性。
+                                </details>
+                               <details>
+                                <summary> ClusterPartitions（集群分区）</summary>
+                                <br>包含集群名称和对应的多个分区。
+                                </details>
+                               <details>
+                                <summary> ClusterRuntimeInfo（集群运行时信息）</summary>
+                                <br>包括集群ID、激活状态（激活或停用）、最后一次操作记录和更新时间。
+                                </details>
+                                <details>
+                                <summary> LastActivationOperation（最后激活操作）</summary>
+                                <br>包含操作员ID和停用备注（如果有）。
+                                </details>
+                        </details>
+                       <details>
+                       <summary> 服务定义</summary>
+                               <details>
+                                <summary>ConfigService</summary>
+                                <br>提供集群相关的操作，包括获取分区信息、查询集群状态、激活和停用集群。
+                                <br>废弃的接口：GetAvailablePartitions 和 GetAvailablePartitionsForCluster 被标记为废弃，推荐使用新的集群配置接口。
+                                </details>
+                        </details>
+                </details>
         </details>
     </details>
 </details>
